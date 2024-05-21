@@ -21,8 +21,9 @@
 #include "widget/toolbar.hpp"
 #include "window/main.hpp"
 
-InstanceList::InstanceItem::InstanceItem(const std::string& id) :
-  m_id(id)
+InstanceList::InstanceItem::InstanceItem(const std::string& id, const std::string& name) :
+  m_id(id),
+  m_name(name)
 {
 }
 
@@ -54,7 +55,7 @@ InstanceList::push(const std::string& id, const std::string& name, const std::st
       return;
   }
 
-  InstanceItem* item = new InstanceItem(id);
+  InstanceItem* item = new InstanceItem(id, name);
 
   item->setText(0, QString::fromStdString(name));
   item->setText(1, QString::fromStdString(version));
@@ -103,4 +104,10 @@ void
 InstanceList::on_selection_change() const
 {
   MainWindow::current()->get_toolbar()->toggle_instance_buttons(!selectedItems().empty());
+}
+
+InstanceList::InstanceItem*
+InstanceList::get_selected_item() const
+{
+  return currentItem() ? static_cast<InstanceItem*>(currentItem()) : nullptr;
 }

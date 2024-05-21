@@ -37,21 +37,25 @@ public:
 private Q_SLOTS:
   void on_selection_change() const;
 
-private:
+public:
   class InstanceItem final : public QTreeWidgetItem
   {
   public:
-    InstanceItem(const std::string& id);
+    InstanceItem(const std::string& id, const std::string& name);
 
     inline const std::string& get_id() const { return m_id; }
+    inline const std::string& get_name() const { return m_name; }
 
   private:
     std::string m_id;
+    std::string m_name;
 
   private:
     InstanceItem(const InstanceItem&) = delete;
     InstanceItem& operator=(const InstanceItem&) = delete;
   };
+
+  InstanceItem* get_selected_item() const;
 
 private:
   InstanceList(const InstanceList&) = delete;
