@@ -1,0 +1,3 @@
+#pragma once
+
+#define PACKAGE_BUILD_HASH "${PACKAGE_BUILD_HASH}"
