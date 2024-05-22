@@ -27,16 +27,11 @@
 #include "widget/instance_list.hpp"
 #include "widget/toolbar.hpp"
 
-MainWindow* MainWindow::s_current = nullptr;
-
 MainWindow::MainWindow() :
   QMainWindow(),
   m_toolbar(new ToolBar),
   m_instance_list(new InstanceList)
 {
-  assert(!s_current);
-  s_current = this;
-
   setWindowTitle("SuperTux Launcher");
   resize(800, 600);
 
@@ -52,10 +47,4 @@ MainWindow::MainWindow() :
   // Set up status bar
   QLabel* version_label = new QLabel("Nightly Build: " + QString(PACKAGE_BUILD_HASH));
   statusBar()->addPermanentWidget(version_label);
-}
-
-MainWindow::~MainWindow()
-{
-  assert(s_current);
-  s_current = nullptr;
 }

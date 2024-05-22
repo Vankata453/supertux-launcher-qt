@@ -16,22 +16,18 @@
 
 #pragma once
 
+#include "util/currenton.hpp"
+
 #include <QMainWindow>
 
 class InstanceList;
 class ToolBar;
 
-class MainWindow final : public QMainWindow
+class MainWindow final : public QMainWindow,
+                         public Currenton<MainWindow>
 {
-private:
-  static MainWindow* s_current;
-
-public:
-  static inline MainWindow* current() { return s_current; }
-
 public:
   MainWindow();
-  ~MainWindow();
 
   inline ToolBar* get_toolbar() const { return m_toolbar; }
   inline InstanceList* get_instance_list() const { return m_instance_list; }

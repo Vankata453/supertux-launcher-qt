@@ -52,6 +52,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 file(GLOB STL_SOURCE ${PROJECT_SOURCE_DIR}/src/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/dialog/*.cpp
+                     ${PROJECT_SOURCE_DIR}/src/util/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/widget/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/window/*.cpp)
 add_executable(supertux-launcher ${STL_SOURCE})
