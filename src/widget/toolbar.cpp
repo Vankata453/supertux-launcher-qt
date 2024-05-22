@@ -16,10 +16,12 @@
 
 #include "widget/toolbar.hpp"
 
+#include <QInputDialog>
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QMouseEvent>
 
+#include "dialog/add_instance.hpp"
 #include "widget/instance_list.hpp"
 #include "window/main.hpp"
 
@@ -63,7 +65,14 @@ ToolBar::ToolBar() :
 void
 ToolBar::on_add_trigger() const
 {
-  MainWindow::current()->get_instance_list()->push("test", "Test Instance", "v0.6.3", "21.05.2024");
+  AddInstanceDialog dialog;
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  MainWindow::current()->get_instance_list()->push(dialog.get_textbox_value(AddInstanceDialog::Field::ID),
+                                                   dialog.get_textbox_value(AddInstanceDialog::Field::NAME),
+                                                   dialog.get_textbox_value(AddInstanceDialog::Field::VERSION),
+                                                   "21.05.2024");
 }
 
 void
