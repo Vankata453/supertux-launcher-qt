@@ -18,44 +18,20 @@
 
 #include <string>
 
-#include <QTreeWidget>
+#include <QStringList>
 
-class Instance;
-
-class InstanceList final : public QTreeWidget
+enum class InstallMethod
 {
-  Q_OBJECT;
-
-public:
-  InstanceList();
-
-  void refresh();
-
-  void paintEvent(QPaintEvent* event) override;
-
-private:
-  void push(const Instance& instance);
-
-private Q_SLOTS:
-  void on_selection_change() const;
-
-public:
-  class InstanceItem final : public QTreeWidgetItem
-  {
-  public:
-    InstanceItem(const Instance& instance);
-
-  public:
-    const Instance& instance;
-
-  private:
-    InstanceItem(const InstanceItem&) = delete;
-    InstanceItem& operator=(const InstanceItem&) = delete;
-  };
-
-  InstanceItem* get_selected_item() const;
-
-private:
-  InstanceList(const InstanceList&) = delete;
-  InstanceList& operator=(const InstanceList&) = delete;
+  UNKNOWN,
+  MSI_INSTALLER,
+  EXE_INSTALLER,
+  ZIP_BINARY,
+  APPIMAGE,
+  SOURCE_BUILD
 };
+
+std::string InstallMethod_to_string(InstallMethod method);
+InstallMethod InstallMethod_from_string(const std::string& method);
+
+QString InstallMethod_to_display_string(InstallMethod method);
+QStringList InstallMethods_to_display_strings(const std::vector<InstallMethod>& methods);

@@ -32,10 +32,13 @@ class AddInstanceDialog final : public QDialog
   Q_OBJECT;
 
 public:
-  enum class Field
+  enum class TextBox
   {
     ID,
-    NAME,
+    NAME
+  };
+  enum class ComboBox
+  {
     VERSION,
     INSTALL_METHOD
   };
@@ -43,22 +46,26 @@ public:
 public:
   AddInstanceDialog();
 
-  std::string get_textbox_value(Field id) const;
+  std::string get_textbox_value(TextBox id) const;
+  int get_combobox_value(ComboBox id) const;
 
 private:
-  QLineEdit* add_textbox(Field id, const std::string& label);
-  QComboBox* add_combobox(Field id, const std::string& label, const QStringList& entries);
+  QLineEdit* add_textbox(TextBox id, const std::string& label);
+  QComboBox* add_combobox(ComboBox id, const std::string& label, const QStringList& entries);
+
+  void update_ok_button();
 
 private Q_SLOTS:
   void on_id_modified();
   void on_id_modified_by_user();
   void on_name_modified();
+  void on_version_changed();
 
 private:
   QFormLayout m_layout;
 
-  std::unordered_map<Field, QLineEdit*> m_textbox_fields;
-  std::unordered_map<Field, QComboBox*> m_combobox_fields;
+  std::unordered_map<TextBox, QLineEdit*> m_textbox_fields;
+  std::unordered_map<ComboBox, QComboBox*> m_combobox_fields;
   QDialogButtonBox* m_buttons;
 
   bool m_lock_id;

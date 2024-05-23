@@ -16,46 +16,32 @@
 
 #pragma once
 
+#include <ctime>
 #include <string>
 
-#include <QTreeWidget>
+#include "instance/install_method.hpp"
+#include "version/version.hpp"
 
-class Instance;
+class Version;
 
-class InstanceList final : public QTreeWidget
+class Instance final
 {
-  Q_OBJECT;
+public:
+  Instance(const std::string& id);
+  Instance(const std::string& id, const std::string& name,
+           Version::Number version, InstallMethod install_method);
 
 public:
-  InstanceList();
+  /* General info */
+  std::string m_id;
+  std::string m_name;
+  const Version* m_version;
 
-  void refresh();
-
-  void paintEvent(QPaintEvent* event) override;
-
-private:
-  void push(const Instance& instance);
-
-private Q_SLOTS:
-  void on_selection_change() const;
-
-public:
-  class InstanceItem final : public QTreeWidgetItem
-  {
-  public:
-    InstanceItem(const Instance& instance);
-
-  public:
-    const Instance& instance;
-
-  private:
-    InstanceItem(const InstanceItem&) = delete;
-    InstanceItem& operator=(const InstanceItem&) = delete;
-  };
-
-  InstanceItem* get_selected_item() const;
+  /* Additional info */
+  std::time_t m_time_created;
+  InstallMethod m_install_method;
 
 private:
-  InstanceList(const InstanceList&) = delete;
-  InstanceList& operator=(const InstanceList&) = delete;
+  Instance(const Instance&) = delete;
+  Instance& operator=(const Instance&) = delete;
 };

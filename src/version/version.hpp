@@ -16,46 +16,35 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
-#include <QTreeWidget>
+#include "instance/install_method.hpp"
+#include "util/platform.hpp"
 
-class Instance;
-
-class InstanceList final : public QTreeWidget
+/** Represents a SuperTux version. */
+class Version
 {
-  Q_OBJECT;
-
 public:
-  InstanceList();
-
-  void refresh();
-
-  void paintEvent(QPaintEvent* event) override;
-
-private:
-  void push(const Instance& instance);
-
-private Q_SLOTS:
-  void on_selection_change() const;
-
-public:
-  class InstanceItem final : public QTreeWidgetItem
+  enum Number
   {
-  public:
-    InstanceItem(const Instance& instance);
-
-  public:
-    const Instance& instance;
-
-  private:
-    InstanceItem(const InstanceItem&) = delete;
-    InstanceItem& operator=(const InstanceItem&) = delete;
+    v0_6_3 = 0
   };
+  static const std::vector<std::string> s_version_names;
+  static const std::unordered_map<Number, const Version* const> s_versions;
 
-  InstanceItem* get_selected_item() const;
+public:
+  Version();
+
+  virtual Number get_number() const = 0;
+
+  virtual std::vector<InstallMethod> get_install_methods() const = 0;
+
+  const std::string& get_name() const;
 
 private:
-  InstanceList(const InstanceList&) = delete;
-  InstanceList& operator=(const InstanceList&) = delete;
+  Version(const Version&) = delete;
+  Version& operator=(const Version&) = delete;
 };

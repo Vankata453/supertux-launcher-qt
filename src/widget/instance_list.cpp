@@ -18,12 +18,14 @@
 
 #include <QPainter>
 
+#include "instance/manager.hpp"
+#include "util/string.hpp"
+#include "version/version.hpp"
 #include "widget/toolbar.hpp"
 #include "window/main.hpp"
 
-InstanceList::InstanceItem::InstanceItem(const std::string& id, const std::string& name) :
-  m_id(id),
-  m_name(name)
+InstanceList::InstanceItem::InstanceItem(const Instance& instance_) :
+  instance(instance_)
 {
 }
 
@@ -43,48 +45,31 @@ InstanceList::InstanceList() :
 
   // Create signal mappings
   connect(this, SIGNAL(itemSelectionChanged()), SLOT(on_selection_change()));
+
+  // Load items
+  refresh();
 }
 
 void
-InstanceList::push(const std::string& id, const std::string& name, const std::string& version, const std::string& created_time)
+InstanceList::refresh()
 {
-  for (int i = 0; i < topLevelItemCount(); i++)
-  {
-    InstanceItem* item = static_cast<InstanceItem*>(topLevelItem(i));
-    if (item->get_id() == id) // Item with given ID already exists
-      return;
-  }
+  clear();
 
-  InstanceItem* item = new InstanceItem(id, name);
+  // Re-add all instances as items
+  for (const Instance* instance : InstanceManager::current()->get_instances())
+    push(*instance);
+}
 
-  item->setText(0, QString::fromStdString(name));
-  item->setText(1, QString::fromStdString(version));
-  item->setText(2, QString::fromStdString(created_time));
+void
+InstanceList::push(const Instance& instance)
+{
+  InstanceItem* item = new InstanceItem(instance);
+
+  item->setText(0, QString::fromStdString(instance.m_name));
+  item->setText(1, QString::fromStdString(instance.m_version->get_name()));
+  item->setText(2, QString::fromStdString(util::timestamp_to_date_string(instance.m_time_created, "%B %d, %Y %T")));
 
   addTopLevelItem(item);
-}
-
-void
-InstanceList::pop(const std::string& id)
-{
-  for (int i = 0; i < topLevelItemCount(); i++)
-  {
-    InstanceItem* item = static_cast<InstanceItem*>(topLevelItem(i));
-    if (item->get_id() == id) // Match!
-    {
-      delete item;
-      break;
-    }
-  }
-}
-
-void
-InstanceList::pop_selected()
-{
-  for (QTreeWidgetItem* item : selectedItems())
-    delete item;
-
-  setCurrentItem(nullptr);
 }
 
 void

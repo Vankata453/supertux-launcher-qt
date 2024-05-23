@@ -22,6 +22,8 @@
 #include <QMouseEvent>
 
 #include "dialog/add_instance.hpp"
+#include "instance/manager.hpp"
+#include "version/version.hpp"
 #include "widget/instance_list.hpp"
 #include "window/main.hpp"
 
@@ -69,20 +71,22 @@ ToolBar::on_add_trigger() const
   if (dialog.exec() != QDialog::Accepted)
     return;
 
-  MainWindow::current()->get_instance_list()->push(dialog.get_textbox_value(AddInstanceDialog::Field::ID),
-                                                   dialog.get_textbox_value(AddInstanceDialog::Field::NAME),
-                                                   dialog.get_textbox_value(AddInstanceDialog::Field::VERSION),
-                                                   "21.05.2024");
+  InstanceManager::current()->create(
+      dialog.get_textbox_value(AddInstanceDialog::TextBox::ID),
+      dialog.get_textbox_value(AddInstanceDialog::TextBox::NAME),
+      static_cast<Version::Number>(dialog.get_combobox_value(AddInstanceDialog::ComboBox::VERSION)),
+      static_cast<InstallMethod>(dialog.get_combobox_value(AddInstanceDialog::ComboBox::INSTALL_METHOD))
+    );
 }
 
 void
 ToolBar::on_remove_trigger() const
 {
-  const std::string& instance_name = MainWindow::current()->get_instance_list()->get_selected_item()->get_name();
+  const Instance& instance = MainWindow::current()->get_instance_list()->get_selected_item()->instance;
 
   QMessageBox confirmation_box;
   confirmation_box.setWindowTitle("Remove Instance");
-  confirmation_box.setText("You are about to delete the instance \"" + QString::fromStdString(instance_name) + "\".");
+  confirmation_box.setText("You are about to delete the instance \"" + QString::fromStdString(instance.m_name) + "\".");
   confirmation_box.setInformativeText("Are you sure?");
   confirmation_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   confirmation_box.setDefaultButton(QMessageBox::No);
@@ -90,11 +94,9 @@ ToolBar::on_remove_trigger() const
   {
     case QMessageBox::Yes:
     {
-      const std::string& instance_id = MainWindow::current()->get_instance_list()->get_selected_item()->get_id();
-
       QMessageBox delete_data_box;
       delete_data_box.setWindowTitle("Remove Data Directory");
-      delete_data_box.setText("Do you wish to erase the data directory for \"" + QString::fromStdString(instance_name) + "\" (ID: \"" + QString::fromStdString(instance_id) + "\")?");
+      delete_data_box.setText("Do you wish to erase the data directory for \"" + QString::fromStdString(instance.m_name) + "\" (ID: \"" + QString::fromStdString(instance.m_id) + "\")?");
       delete_data_box.setInformativeText("If you choose not to, a new instance with the same ID can use it.");
       delete_data_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
       delete_data_box.setDefaultButton(QMessageBox::Abort);
@@ -103,7 +105,7 @@ ToolBar::on_remove_trigger() const
         // TODO
         case QMessageBox::Yes:
         case QMessageBox::No:
-          MainWindow::current()->get_instance_list()->pop_selected();
+          InstanceManager::current()->remove(instance.m_id);
           break;
 
         default:

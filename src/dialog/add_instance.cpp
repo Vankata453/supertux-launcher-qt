@@ -22,6 +22,9 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "instance/manager.hpp"
+#include "util/string.hpp"
+
 AddInstanceDialog::AddInstanceDialog() :
   QDialog(),
   m_layout(this),
@@ -33,16 +36,19 @@ AddInstanceDialog::AddInstanceDialog() :
   setWindowTitle("Add Instance");
 
   // Add textboxes
-  QLineEdit* id_box = add_textbox(Field::ID, "ID");
-  QLineEdit* name_box = add_textbox(Field::NAME, "Name");
-  add_combobox(Field::VERSION, "Version", { "0.6.3", "0.6.2", "0.6.1", "0.6.0" /*...*/ }); // TODO
-  add_combobox(Field::INSTALL_METHOD, "Install Method", { "Compile From Source", "MSI installer" /*...*/ }); // TODO
+  QLineEdit* id_box = add_textbox(TextBox::ID, "ID");
+  QLineEdit* name_box = add_textbox(TextBox::NAME, "Name");
+  QComboBox* version_box = add_combobox(ComboBox::VERSION, "Version", util::to_qt_string_list(Version::s_version_names));
+  add_combobox(ComboBox::INSTALL_METHOD, "Install Method", {});
 
   QObject::connect(id_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_id_modified()));
   QObject::connect(id_box, SIGNAL(textEdited(const QString&)), this, SLOT(on_id_modified_by_user()));
 
   name_box->setFocus();
   QObject::connect(name_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_name_modified()));
+
+  QObject::connect(version_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_version_changed()));
+  on_version_changed(); // Initial
 
   // Add buttons
   m_layout.addRow(m_buttons);
@@ -54,7 +60,7 @@ AddInstanceDialog::AddInstanceDialog() :
 }
 
 QLineEdit*
-AddInstanceDialog::add_textbox(Field id, const std::string& label)
+AddInstanceDialog::add_textbox(TextBox id, const std::string& label)
 {
   QLineEdit* line_edit = new QLineEdit(this);
 
@@ -65,7 +71,7 @@ AddInstanceDialog::add_textbox(Field id, const std::string& label)
 }
 
 QComboBox*
-AddInstanceDialog::add_combobox(Field id, const std::string& label, const QStringList& entries)
+AddInstanceDialog::add_combobox(ComboBox id, const std::string& label, const QStringList& entries)
 {
   QComboBox* combo_box = new QComboBox(this);
   combo_box->addItems(entries);
@@ -77,26 +83,40 @@ AddInstanceDialog::add_combobox(Field id, const std::string& label, const QStrin
 }
 
 std::string
-AddInstanceDialog::get_textbox_value(Field id) const
+AddInstanceDialog::get_textbox_value(TextBox id) const
 {
-  {
-    const auto it = m_textbox_fields.find(id);
-    if (it != m_textbox_fields.end())
-      return it->second->text().toStdString();
-  }
-  {
-    const auto it = m_combobox_fields.find(id);
-    assert(it != m_combobox_fields.end());
+  const auto it = m_textbox_fields.find(id);
+  assert(it != m_textbox_fields.end());
 
-    return it->second->currentText().toStdString();
-  }
+  return it->second->text().toStdString();
+}
+
+int
+AddInstanceDialog::get_combobox_value(ComboBox id) const
+{
+  const auto it = m_combobox_fields.find(id);
+  assert(it != m_combobox_fields.end());
+
+  return it->second->currentIndex();
+}
+
+void
+AddInstanceDialog::update_ok_button()
+{
+  const QString id = m_textbox_fields[TextBox::ID]->text();
+
+  // Enable the "OK" button only when:
+  m_buttons->button(QDialogButtonBox::Ok)->setEnabled(
+    m_combobox_fields[ComboBox::INSTALL_METHOD]->count() > 0 && // 1. The version has available installation methods.
+    !id.isEmpty() && // 2. The ID field is not empty.
+    !InstanceManager::current()->exists(id.toStdString()) // 3. An instance with the provided ID doesn't exist.
+  );
 }
 
 void
 AddInstanceDialog::on_id_modified()
 {
-  // Toggle "OK" button, depending on whether the ID field is empty
-  m_buttons->button(QDialogButtonBox::Ok)->setEnabled(!m_textbox_fields[Field::ID]->text().isEmpty());
+  update_ok_button();
 }
 
 void
@@ -114,5 +134,21 @@ AddInstanceDialog::on_name_modified()
 
   // Automatically generate an ID from the new name
   // TODO: Handle illegal filename chars
-  m_textbox_fields[Field::ID]->setText(m_textbox_fields[Field::NAME]->text().replace(" ", "-"));
+  m_textbox_fields[TextBox::ID]->setText(m_textbox_fields[TextBox::NAME]->text().replace(" ", "-"));
+}
+
+void
+AddInstanceDialog::on_version_changed()
+{
+  QComboBox* install_method_box = m_combobox_fields[ComboBox::INSTALL_METHOD];
+
+  // On version change, set the "Install Method" options to the ones specified for the new version
+  install_method_box->clear();
+  install_method_box->addItems(InstallMethods_to_display_strings(
+    Version::s_versions.at(static_cast<Version::Number>(m_combobox_fields[ComboBox::VERSION]->currentIndex()))->get_install_methods()));
+
+  // If no methods are available, disable the box
+  install_method_box->setEnabled(install_method_box->count() > 0);
+
+  update_ok_button();
 }

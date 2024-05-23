@@ -16,46 +16,22 @@
 
 #pragma once
 
-#include <string>
+#include "version/version.hpp"
 
-#include <QTreeWidget>
+namespace version {
 
-class Instance;
-
-class InstanceList final : public QTreeWidget
+class v063 final : public Version
 {
-  Q_OBJECT;
-
 public:
-  InstanceList();
+  v063();
 
-  void refresh();
+  Number get_number() const override { return v0_6_3; }
 
-  void paintEvent(QPaintEvent* event) override;
+  std::vector<InstallMethod> get_install_methods() const override;
 
 private:
-  void push(const Instance& instance);
-
-private Q_SLOTS:
-  void on_selection_change() const;
-
-public:
-  class InstanceItem final : public QTreeWidgetItem
-  {
-  public:
-    InstanceItem(const Instance& instance);
-
-  public:
-    const Instance& instance;
-
-  private:
-    InstanceItem(const InstanceItem&) = delete;
-    InstanceItem& operator=(const InstanceItem&) = delete;
-  };
-
-  InstanceItem* get_selected_item() const;
-
-private:
-  InstanceList(const InstanceList&) = delete;
-  InstanceList& operator=(const InstanceList&) = delete;
+  v063(const v063&) = delete;
+  v063& operator=(const v063&) = delete;
 };
+
+} // namespace version
