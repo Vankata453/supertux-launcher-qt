@@ -18,42 +18,29 @@
 
 #include <string>
 
-#include <QTreeWidget>
+#include <QTreeView>
 
-class Instance;
+#include "instance/manager.hpp"
 
-class InstanceList final : public QTreeWidget
+class QSortFilterProxyModel;
+
+class InstanceList final : public QTreeView
 {
   Q_OBJECT;
 
 public:
   InstanceList();
 
-  void refresh();
-
   void paintEvent(QPaintEvent* event) override;
-
-private:
-  void push(const Instance& instance);
 
 private Q_SLOTS:
   void on_selection_change() const;
 
 public:
-  class InstanceItem final : public QTreeWidgetItem
-  {
-  public:
-    InstanceItem(const Instance& instance);
+  InstanceManager::InstanceItem* get_selected_item() const;
 
-  public:
-    const Instance& instance;
-
-  private:
-    InstanceItem(const InstanceItem&) = delete;
-    InstanceItem& operator=(const InstanceItem&) = delete;
-  };
-
-  InstanceItem* get_selected_item() const;
+private:
+  QSortFilterProxyModel* m_proxy_model;
 
 private:
   InstanceList(const InstanceList&) = delete;

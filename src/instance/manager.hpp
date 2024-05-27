@@ -21,12 +21,13 @@
 #include <memory>
 #include <vector>
 
+#include <QStandardItemModel>
+
 #include "instance/instance.hpp"
-#include "widget/instance_list.hpp"
-#include "window/main.hpp"
 
 /** A manager for SuperTux instances. */
-class InstanceManager final : public Currenton<InstanceManager>
+class InstanceManager final : public Currenton<InstanceManager>,
+                              public QStandardItemModel
 {
 public:
   InstanceManager();
@@ -40,8 +41,8 @@ public:
 
     assert(!exists(instance->m_id)); // The instance must not exist
 
+    append_instance_item(*instance);
     m_instances.push_back(std::move(instance));
-    MainWindow::current()->get_instance_list()->refresh();
 
     return *m_instances.back();
   }
@@ -50,6 +51,24 @@ public:
   bool exists(const std::string& id) const;
 
   std::vector<const Instance*> get_instances() const;
+
+public:
+  class InstanceItem final : public QStandardItem
+  {
+  public:
+    InstanceItem(const Instance& instance);
+
+  public:
+    const Instance& instance;
+
+  private:
+    InstanceItem(const InstanceItem&) = delete;
+    InstanceItem& operator=(const InstanceItem&) = delete;
+  };
+
+private:
+  void append_instance_item(const Instance& instance);
+  void remove_instance_item(const std::string& id);
 
 private:
   std::vector<std::unique_ptr<Instance>> m_instances;

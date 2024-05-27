@@ -18,11 +18,25 @@
 
 #include <algorithm>
 
+#include "util/string.hpp"
+#include "version/version.hpp"
+
+InstanceManager::InstanceItem::InstanceItem(const Instance& instance_) :
+  QStandardItem(QString::fromStdString(instance_.m_name)),
+  instance(instance_)
+{
+}
+
+
 static InstanceManager s_instance_manager;
 
 InstanceManager::InstanceManager() :
+  QStandardItemModel(),
   m_instances()
 {
+  setHorizontalHeaderItem(0, new QStandardItem("Name"));
+  setHorizontalHeaderItem(1, new QStandardItem("Version"));
+  setHorizontalHeaderItem(2, new QStandardItem("Created"));
 }
 
 const Instance&
@@ -40,14 +54,14 @@ InstanceManager::get(const std::string& id)
 void
 InstanceManager::remove(const std::string& id)
 {
+  remove_instance_item(id);
+
   m_instances.erase(std::remove_if(m_instances.begin(), m_instances.end(),
                                    [id](const auto& instance)
                                    {
                                      return instance->m_id == id;
                                    }),
                     m_instances.end());
-
-  MainWindow::current()->get_instance_list()->refresh();
 }
 
 bool
@@ -69,4 +83,31 @@ InstanceManager::get_instances() const
     result.push_back(instance.get());
 
   return result;
+}
+
+void
+InstanceManager::append_instance_item(const Instance& instance)
+{
+  QStandardItem* time_created = new QStandardItem(instance.m_time_created.toString("MMMM dd, yyyy hh:mm:ss"));
+  time_created->setData(instance.m_time_created, Qt::UserRole);
+
+  appendRow({
+      new InstanceItem(instance),
+      new QStandardItem(QString::fromStdString(instance.m_version->get_name())),
+      time_created
+    });
+}
+
+void
+InstanceManager::remove_instance_item(const std::string& id)
+{
+  for (int i = 0; i < rowCount(); i++)
+  {
+    const InstanceItem* instance_item = static_cast<const InstanceItem*>(item(i));
+    if (instance_item->instance.m_id == id)
+    {
+      removeRow(instance_item->row());
+      break;
+    }
+  }
 }

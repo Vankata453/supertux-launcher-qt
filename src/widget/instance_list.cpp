@@ -17,65 +17,35 @@
 #include "widget/instance_list.hpp"
 
 #include <QPainter>
+#include <QSortFilterProxyModel>
 
-#include "instance/manager.hpp"
-#include "util/string.hpp"
-#include "version/version.hpp"
 #include "widget/toolbar.hpp"
 #include "window/main.hpp"
 
-InstanceList::InstanceItem::InstanceItem(const Instance& instance_) :
-  instance(instance_)
-{
-}
-
-
 InstanceList::InstanceList() :
-  QTreeWidget()
+  QTreeView(),
+  m_proxy_model(new QSortFilterProxyModel())
 {
   setRootIsDecorated(false);
 
-  // Set columns
-  QStringList columns;
-  columns << "Name" << "Version" << "Created";
-  setHeaderLabels(columns);
+  // Set model
+  m_proxy_model->setSourceModel(InstanceManager::current());
+  m_proxy_model->sort(2); // Sort by "Created" date
+  m_proxy_model->setSortRole(Qt::UserRole);
+  setModel(m_proxy_model);
 
+  // Set column properties
   setColumnWidth(0, 300); // "Name"
   setColumnWidth(1, 150); // "Version"
 
   // Create signal mappings
-  connect(this, SIGNAL(itemSelectionChanged()), SLOT(on_selection_change()));
-
-  // Load items
-  refresh();
-}
-
-void
-InstanceList::refresh()
-{
-  clear();
-
-  // Re-add all instances as items
-  for (const Instance* instance : InstanceManager::current()->get_instances())
-    push(*instance);
-}
-
-void
-InstanceList::push(const Instance& instance)
-{
-  InstanceItem* item = new InstanceItem(instance);
-
-  item->setText(0, QString::fromStdString(instance.m_name));
-  item->setText(1, QString::fromStdString(instance.m_version->get_name()));
-  item->setText(2, QString::fromStdString(util::timestamp_to_date_string(instance.m_time_created, "%B %d, %Y %T")));
-
-  addTopLevelItem(item);
+  QObject::connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), SLOT(on_selection_change()));
 }
 
 void
 InstanceList::paintEvent(QPaintEvent* event)
 {
-  QTreeWidget::paintEvent(event);
+  QTreeView::paintEvent(event);
 
   if (model()->rowCount(rootIndex()) > 0)
     return;
@@ -88,11 +58,16 @@ InstanceList::paintEvent(QPaintEvent* event)
 void
 InstanceList::on_selection_change() const
 {
-  MainWindow::current()->get_toolbar()->toggle_instance_buttons(!selectedItems().empty());
+  MainWindow::current()->get_toolbar()->toggle_instance_buttons(!selectedIndexes().empty());
 }
 
-InstanceList::InstanceItem*
+InstanceManager::InstanceItem*
 InstanceList::get_selected_item() const
 {
-  return currentItem() ? static_cast<InstanceItem*>(currentItem()) : nullptr;
+  QModelIndexList indexes = selectedIndexes();
+  if (indexes.empty())
+    return nullptr;
+
+  QModelIndex index = m_proxy_model->mapToSource(indexes[0]);
+  return static_cast<InstanceManager::InstanceItem*>(InstanceManager::current()->item(index.row()));
 }

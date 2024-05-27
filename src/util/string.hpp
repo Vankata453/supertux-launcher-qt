@@ -21,8 +21,6 @@
 
 namespace util {
 
-std::string timestamp_to_date_string(std::time_t timestamp, const char* format);
-
 QStringList to_qt_string_list(const std::vector<std::string>& vector);
 
 } // namespace util

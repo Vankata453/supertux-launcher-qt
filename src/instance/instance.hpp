@@ -19,6 +19,8 @@
 #include <ctime>
 #include <string>
 
+#include <QDateTime>
+
 #include "instance/install_method.hpp"
 #include "version/version.hpp"
 
@@ -38,7 +40,7 @@ public:
   const Version* m_version;
 
   /* Additional info */
-  std::time_t m_time_created;
+  QDateTime m_time_created;
   InstallMethod m_install_method;
 
 private:

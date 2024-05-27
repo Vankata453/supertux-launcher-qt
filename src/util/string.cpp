@@ -16,17 +16,7 @@
 
 #include "util/string.hpp"
 
-#include <iomanip>
-#include <sstream>
-
 namespace util {
-
-std::string timestamp_to_date_string(std::time_t timestamp, const char* format)
-{
-  std::stringstream out;
-  out << std::put_time(std::localtime(&timestamp), format);
-  return out.str();
-}
 
 QStringList to_qt_string_list(const std::vector<std::string>& vector)
 {

@@ -31,7 +31,7 @@ Instance::Instance(const std::string& id, const std::string& name,
   m_id(id),
   m_name(name),
   m_version(Version::s_versions.at(version)),
-  m_time_created(std::time(nullptr)), // Current time
+  m_time_created(QDateTime::currentDateTime()), // Current time
   m_install_method(install_method)
 {
 }
