@@ -17,7 +17,6 @@
 #include "window/main.hpp"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QLabel>
 #include <QScreen>
 #include <QStatusBar>
@@ -36,9 +35,7 @@ MainWindow::MainWindow() :
   resize(800, 600);
 
   // Center window on screen
-  const QRect screen_rect = QGuiApplication::primaryScreen()->geometry();
-  move((screen_rect.width() - width()) / 2,
-       (screen_rect.height() - height()) / 2);
+  move(screen()->geometry().center() - frameGeometry().center());
 
   // Add widgets
   setMenuWidget(m_toolbar);
