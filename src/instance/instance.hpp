@@ -20,6 +20,7 @@
 #include <string>
 
 #include <QDateTime>
+#include <QDir>
 
 #include "instance/install_method.hpp"
 #include "version/version.hpp"
@@ -29,19 +30,28 @@ class Version;
 class Instance final
 {
 public:
-  Instance(const std::string& id);
-  Instance(const std::string& id, const std::string& name,
-           Version::Number version, InstallMethod install_method);
+  Instance(const QDir& parent_dir, const std::string& id);
+  Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
+           Version::Number version, int version_install_method);
+
+  void load();
+  void save();
+
+  void delete_directory();
 
 public:
   /* General info */
-  std::string m_id;
+  const std::string m_id;
   std::string m_name;
   const Version* m_version;
 
   /* Additional info */
   QDateTime m_time_created;
   InstallMethod m_install_method;
+
+private:
+  const QDir& m_parent_dir;
+  QDir m_dir;
 
 private:
   Instance(const Instance&) = delete;

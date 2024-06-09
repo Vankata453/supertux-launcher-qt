@@ -17,6 +17,7 @@
 #include "instance/manager.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 #include "util/string.hpp"
 #include "version/version.hpp"
@@ -28,15 +29,41 @@ InstanceManager::InstanceItem::InstanceItem(const Instance& instance_) :
 }
 
 
-static InstanceManager s_instance_manager;
-
 InstanceManager::InstanceManager() :
   QStandardItemModel(),
-  m_instances()
+  m_instances(),
+  m_instances_dir(QDir("instances"))
 {
+  // Initialize model columns
   setHorizontalHeaderItem(0, new QStandardItem("Name"));
   setHorizontalHeaderItem(1, new QStandardItem("Version"));
   setHorizontalHeaderItem(2, new QStandardItem("Created"));
+
+  // Create "instances" directory, if it doesn't exist
+  if (!m_instances_dir.exists() && !QDir::current().mkdir("instances"))
+    throw std::runtime_error("Error creating \"instances\" directory!");
+
+  // Load all instances
+  for (const QString& instance_dir : m_instances_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name))
+  {
+    try
+    {
+      auto instance = std::make_unique<Instance>(m_instances_dir, instance_dir.toStdString()); // The directory name represents the ID
+      append_instance_item(*instance);
+      m_instances.push_back(std::move(instance));
+    }
+    catch (const std::exception& err)
+    {
+      std::cout << "Couldn't load instance \"" << instance_dir.toStdString() << "\": " << err.what() << std::endl;
+    }
+  }
+}
+
+InstanceManager::~InstanceManager()
+{
+  // Save all instances
+  for (const auto& instance : m_instances)
+    instance->save();
 }
 
 const Instance&
@@ -52,14 +79,19 @@ InstanceManager::get(const std::string& id)
 }
 
 void
-InstanceManager::remove(const std::string& id)
+InstanceManager::remove(const std::string& id) // TODO: With/without saves
 {
   remove_instance_item(id);
 
   m_instances.erase(std::remove_if(m_instances.begin(), m_instances.end(),
                                    [id](const auto& instance)
                                    {
-                                     return instance->m_id == id;
+                                     if (instance->m_id == id)
+                                     {
+                                       instance->delete_directory();
+                                       return true;
+                                     }
+                                     return false;
                                    }),
                     m_instances.end());
 }

@@ -16,22 +16,94 @@
 
 #include "instance/instance.hpp"
 
-Instance::Instance(const std::string& id) :
+#include <QTimeZone>
+
+#include "util/reader_document.hpp"
+#include "util/reader_mapping.hpp"
+#include "util/writer.hpp"
+
+Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_id(id),
   m_name("<unnamed>"),
   m_version(),
   m_time_created(),
-  m_install_method()
+  m_install_method(),
+  m_parent_dir(parent_dir),
+  m_dir(parent_dir.filePath(QString::fromStdString(id)))
 {
-  // TODO: Load from data file
+  load();
 }
 
-Instance::Instance(const std::string& id, const std::string& name,
-                   Version::Number version, InstallMethod install_method) :
+Instance::Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
+                   Version::Number version, int version_install_method) :
   m_id(id),
   m_name(name),
   m_version(Version::s_versions.at(version)),
   m_time_created(QDateTime::currentDateTime()), // Current time
-  m_install_method(install_method)
+  m_install_method(m_version->get_install_methods().at(version_install_method)),
+  m_parent_dir(parent_dir),
+  m_dir(parent_dir.filePath(QString::fromStdString(id)))
 {
+  save();
+}
+
+void
+Instance::load()
+{
+  try
+  {
+    auto doc = ReaderDocument::from_file(m_dir.filePath("data.stlid").toStdString());
+    auto root = doc.get_root();
+    if (root.get_name() != "supertux-launcher-instance")
+      throw std::runtime_error("File is not a \"supertux-launcher-instance\" file!");
+
+    auto mapping = root.get_mapping();
+
+    mapping.get("name", m_name);
+    if (m_name.empty())
+      throw std::runtime_error("No instance name specified!");
+
+    std::string version_name;
+    mapping.get("version", version_name);
+    m_version = Version::from_name(version_name);
+
+    int time_created;
+    mapping.get("created-time", time_created);
+    m_time_created = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(time_created), QTimeZone::utc());
+
+    std::string install_method;
+    mapping.get("install-method", install_method);
+    m_install_method = InstallMethod_from_string(install_method);
+    if (m_install_method == InstallMethod::UNKNOWN)
+      throw std::runtime_error("Unknown install method specified!");
+  }
+  catch (const std::exception& err)
+  {
+    throw std::runtime_error(std::string("Couldn't read instance data file (\"data.stlid\"): ") + err.what());
+  }
+}
+
+void
+Instance::save()
+{
+  // Create instance directory, if it doesn't exist
+  if (!m_dir.exists() && !m_parent_dir.mkdir(QString::fromStdString(m_id)))
+    throw std::runtime_error("Error creating directory for instance \"" + m_id + "\"!");
+
+  // Save instance data file
+  Writer writer(m_dir.filePath("data.stlid").toStdString());
+  writer.start_list("supertux-launcher-instance");
+
+  writer.write("name", m_name);
+  writer.write("version", m_version->get_name());
+  writer.write("created-time", static_cast<int>(m_time_created.toSecsSinceEpoch()));
+  writer.write("install-method", InstallMethod_to_string(m_install_method));
+
+  writer.end_list("supertux-launcher-instance");
+}
+
+void
+Instance::delete_directory()
+{
+  m_dir.removeRecursively();
 }

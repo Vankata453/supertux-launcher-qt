@@ -1,5 +1,5 @@
-//  SuperTux Launcher
-//  Copyright (C) 2024 Vankata453
+//  SuperTux
+//  Copyright (C) 2015 Ingo Ruhnke <grumbel@gmail.com>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -14,30 +14,34 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#include "util/reader_object.hpp"
 
-#include <QApplication>
+#include <assert.h>
+#include <sexp/value.hpp>
+#include <stdexcept>
 
-#include "instance/manager.hpp"
-#include "window/main.hpp"
+#include "util/reader_error.hpp"
+#include "util/reader_mapping.hpp"
 
-int main(int argc, char* argv[])
+ReaderObject::ReaderObject(const ReaderDocument& doc, const sexp::Value& sx) :
+  m_doc(doc),
+  m_sx(sx)
 {
-  try
-  {
-    /* Currenton instances */
-    InstanceManager manager;
-
-    QApplication app(argc, argv);
-
-    MainWindow window;
-    window.show();
-
-    return app.exec();
-  }
-  catch (const std::exception& err)
-  {
-    std::cout << "Uncaught exception: " << err.what() << std::endl;
-    return 1;
-  }
 }
+
+std::string
+ReaderObject::get_name() const
+{
+  assert_array_size_ge(m_doc, m_sx, 1);
+  assert_is_symbol(m_doc, m_sx.as_array()[0]);
+
+  return m_sx.as_array()[0].as_string();
+}
+
+ReaderMapping
+ReaderObject::get_mapping() const
+{
+  return ReaderMapping(m_doc, m_sx);
+}
+
+/* EOF */

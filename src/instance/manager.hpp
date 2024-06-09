@@ -21,6 +21,7 @@
 #include <memory>
 #include <vector>
 
+#include <QDir>
 #include <QStandardItemModel>
 
 #include "instance/instance.hpp"
@@ -31,20 +32,22 @@ class InstanceManager final : public Currenton<InstanceManager>,
 {
 public:
   InstanceManager();
+  virtual ~InstanceManager();
 
   const Instance& get(const std::string& id);
 
   template<typename... Args>
   const Instance& create(Args&&... args)
   {
-    auto instance = std::make_unique<Instance>(std::forward<Args>(args)...);
+    auto instance = std::make_unique<Instance>(m_instances_dir, std::forward<Args>(args)...);
 
     assert(!exists(instance->m_id)); // The instance must not exist
 
-    append_instance_item(*instance);
-    m_instances.push_back(std::move(instance));
+    const Instance& instance_ref = *instance;
+    append_instance_item(instance_ref);
 
-    return *m_instances.back();
+    m_instances.push_back(std::move(instance));
+    return instance_ref;
   }
   void remove(const std::string& id);
 
@@ -72,6 +75,7 @@ private:
 
 private:
   std::vector<std::unique_ptr<Instance>> m_instances;
+  QDir m_instances_dir;
 
 private:
   InstanceManager(const InstanceManager&) = delete;

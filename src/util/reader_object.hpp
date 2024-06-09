@@ -1,5 +1,5 @@
-//  SuperTux Launcher
-//  Copyright (C) 2024 Vankata453
+//  SuperTux
+//  Copyright (C) 2015 Ingo Ruhnke <grumbel@gmail.com>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -14,30 +14,34 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#ifndef HEADER_SUPERTUX_UTIL_READER_OBJECT_HPP
+#define HEADER_SUPERTUX_UTIL_READER_OBJECT_HPP
 
-#include <QApplication>
+#include <string>
 
-#include "instance/manager.hpp"
-#include "window/main.hpp"
+namespace sexp {
+class Value;
+} // namespace sexp
 
-int main(int argc, char* argv[])
+class ReaderDocument;
+class ReaderMapping;
+
+class ReaderObject final
 {
-  try
-  {
-    /* Currenton instances */
-    InstanceManager manager;
+public:
+  ReaderObject(const ReaderDocument& doc, const sexp::Value& sx);
 
-    QApplication app(argc, argv);
+  std::string get_name() const;
+  ReaderMapping get_mapping() const;
 
-    MainWindow window;
-    window.show();
+  const ReaderDocument& get_doc() const { return m_doc; }
+  const sexp::Value& get_sexp() const { return m_sx; }
 
-    return app.exec();
-  }
-  catch (const std::exception& err)
-  {
-    std::cout << "Uncaught exception: " << err.what() << std::endl;
-    return 1;
-  }
-}
+private:
+  const ReaderDocument& m_doc;
+  const sexp::Value& m_sx;
+};
+
+#endif
+
+/* EOF */

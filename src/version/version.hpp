@@ -35,6 +35,8 @@ public:
   static const std::vector<std::string> s_version_names;
   static const std::unordered_map<Number, const Version* const> s_versions;
 
+  static const Version* from_name(const std::string& name);
+
 public:
   Version();
 

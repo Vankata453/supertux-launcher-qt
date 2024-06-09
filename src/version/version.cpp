@@ -16,6 +16,8 @@
 
 #include "version/version.hpp"
 
+#include <algorithm>
+
 /* Versions */
 #include "version/v063.hpp"
 
@@ -26,6 +28,16 @@ const std::vector<std::string> Version::s_version_names = {
 const std::unordered_map<Version::Number, const Version* const> Version::s_versions = {
   { v0_6_3, new version::v063() }
 };
+
+const Version*
+Version::from_name(const std::string& name)
+{
+  const auto it = std::find(s_version_names.begin(), s_version_names.end(), name);
+  if (it == s_version_names.end())
+    throw std::runtime_error("No version with name \"" + name + "\"!");
+
+  return s_versions.at(static_cast<Number>(it - s_version_names.begin()));
+}
 
 
 Version::Version()

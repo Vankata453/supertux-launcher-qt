@@ -46,7 +46,12 @@ configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/version.h)
 
 # Find packages
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+
+# Import libraries
+
+set(USE_CXX17 ON)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/sexp-cpp)
 
 # Add executable
 
@@ -61,4 +66,6 @@ add_executable(supertux-launcher ${STL_SOURCE})
 
 # Link libraries
 
+target_link_libraries(supertux-launcher PUBLIC Qt5::Core)
 target_link_libraries(supertux-launcher PUBLIC Qt5::Widgets)
+target_link_libraries(supertux-launcher PUBLIC sexp)

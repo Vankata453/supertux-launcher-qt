@@ -75,7 +75,7 @@ ToolBar::on_add_trigger() const
       dialog.get_textbox_value(AddInstanceDialog::TextBox::ID),
       dialog.get_textbox_value(AddInstanceDialog::TextBox::NAME),
       static_cast<Version::Number>(dialog.get_combobox_value(AddInstanceDialog::ComboBox::VERSION)),
-      static_cast<InstallMethod>(dialog.get_combobox_value(AddInstanceDialog::ComboBox::INSTALL_METHOD))
+      dialog.get_combobox_value(AddInstanceDialog::ComboBox::INSTALL_METHOD)
     );
 }
 
