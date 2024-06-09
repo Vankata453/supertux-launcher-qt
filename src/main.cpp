@@ -14,16 +14,26 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
+
 #include <QApplication>
 
 #include "window/main.hpp"
 
 int main(int argc, char* argv[])
 {
-  QApplication app(argc, argv);
+  try
+  {
+    QApplication app(argc, argv);
 
-  MainWindow window;
-  window.show();
+    MainWindow window;
+    window.show();
 
-  return app.exec();
+    return app.exec();
+  }
+  catch (const std::exception& err)
+  {
+    std::cout << "Uncaught exception: " << err.what() << std::endl;
+    return 1;
+  }
 }
