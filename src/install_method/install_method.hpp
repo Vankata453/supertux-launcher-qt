@@ -20,32 +20,43 @@
 #include <unordered_map>
 #include <vector>
 
-#include "install_method/install_method.hpp"
+#include <QStringList>
+
 #include "util/platform.hpp"
 
-/** Represents a SuperTux version. */
-class Version
+/** Represents a SuperTux instance install method.
+    Install methods provide functions for installing and launching an instance. (TODO) */
+class InstallMethod
 {
 public:
-  enum Number
+  enum Type
   {
-    v0_6_3 = 0
+    UNKNOWN = 0,
+#ifdef PLATFORM_WIN
+    MSI_INSTALLER,
+    EXE_INSTALLER,
+#endif
+    ZIP_BINARY,
+#ifdef PLATFORM_LINUX
+    APPIMAGE,
+#endif
+    SOURCE_BUILD
   };
-  static const std::vector<std::string> s_version_names;
-  static const std::unordered_map<Number, const Version* const> s_versions;
+  static const std::vector<std::string> s_install_method_names;
+  static const std::unordered_map<Type, const InstallMethod* const> s_install_methods;
 
-  static const Version* from_name(const std::string& name);
+  static const InstallMethod* from_string(const std::string& method);
+  static QStringList to_display_names(const std::vector<InstallMethod::Type>& methods);
 
 public:
-  Version();
+  InstallMethod();
 
-  virtual Number get_number() const = 0;
-
-  virtual std::vector<InstallMethod::Type> get_install_methods() const = 0;
+  virtual Type get_type() const = 0;
 
   const std::string& get_name() const;
+  virtual std::string get_display_name() const = 0;
 
 private:
-  Version(const Version&) = delete;
-  Version& operator=(const Version&) = delete;
+  InstallMethod(const InstallMethod&) = delete;
+  InstallMethod& operator=(const InstallMethod&) = delete;
 };

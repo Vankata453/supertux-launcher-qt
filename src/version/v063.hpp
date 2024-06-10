@@ -27,7 +27,7 @@ public:
 
   Number get_number() const override { return v0_6_3; }
 
-  std::vector<InstallMethod> get_install_methods() const override;
+  std::vector<InstallMethod::Type> get_install_methods() const override;
 
 private:
   v063(const v063&) = delete;

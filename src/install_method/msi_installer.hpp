@@ -16,22 +16,26 @@
 
 #pragma once
 
-#include <string>
+#include "install_method/install_method.hpp"
 
-#include <QStringList>
+#ifdef PLATFORM_WIN
 
-enum class InstallMethod
+namespace install_method {
+
+class MsiInstaller final : public InstallMethod
 {
-  UNKNOWN,
-  MSI_INSTALLER,
-  EXE_INSTALLER,
-  ZIP_BINARY,
-  APPIMAGE,
-  SOURCE_BUILD
+public:
+  MsiInstaller();
+
+  Type get_type() const override { return MSI_INSTALLER; }
+
+  std::string get_display_name() const override { return "MSI Installer"; }
+
+private:
+  MsiInstaller(const MsiInstaller&) = delete;
+  MsiInstaller& operator=(const MsiInstaller&) = delete;
 };
 
-std::string InstallMethod_to_string(InstallMethod method);
-InstallMethod InstallMethod_from_string(const std::string& method);
+} // namespace install_method
 
-QString InstallMethod_to_display_string(InstallMethod method);
-QStringList InstallMethods_to_display_strings(const std::vector<InstallMethod>& methods);
+#endif

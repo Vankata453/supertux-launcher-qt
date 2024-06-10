@@ -14,25 +14,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "version/v063.hpp"
+#pragma once
 
-namespace version {
+#include "install_method/install_method.hpp"
 
-v063::v063()
+namespace install_method {
+
+class Unknown final : public InstallMethod
 {
-}
+public:
+  Unknown();
 
-std::vector<InstallMethod::Type>
-v063::get_install_methods() const
-{
-  return {
-#ifdef PLATFORM_WIN
-    InstallMethod::MSI_INSTALLER
-#elifdef PLATFORM_LINUX
-    InstallMethod::APPIMAGE,
-    InstallMethod::SOURCE_BUILD
-#endif
-  };
-}
+  Type get_type() const override { return UNKNOWN; }
 
-} // namespace version
+  std::string get_display_name() const override { return "Unknown"; }
+
+private:
+  Unknown(const Unknown&) = delete;
+  Unknown& operator=(const Unknown&) = delete;
+};
+
+} // namespace install_method

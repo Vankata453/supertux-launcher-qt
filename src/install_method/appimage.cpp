@@ -14,25 +14,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "version/v063.hpp"
+#include "install_method/appimage.hpp"
 
-namespace version {
+#ifdef PLATFORM_LINUX
 
-v063::v063()
+namespace install_method {
+
+AppImage::AppImage()
 {
 }
 
-std::vector<InstallMethod::Type>
-v063::get_install_methods() const
-{
-  return {
-#ifdef PLATFORM_WIN
-    InstallMethod::MSI_INSTALLER
-#elifdef PLATFORM_LINUX
-    InstallMethod::APPIMAGE,
-    InstallMethod::SOURCE_BUILD
+} // namespace install_method
+
 #endif
-  };
-}
-
-} // namespace version

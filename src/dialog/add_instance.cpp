@@ -144,7 +144,7 @@ AddInstanceDialog::on_version_changed()
 
   // On version change, set the "Install Method" options to the ones specified for the new version
   install_method_box->clear();
-  install_method_box->addItems(InstallMethods_to_display_strings(
+  install_method_box->addItems(InstallMethod::to_display_names(
     Version::s_versions.at(static_cast<Version::Number>(m_combobox_fields[ComboBox::VERSION]->currentIndex()))->get_install_methods()));
 
   // If no methods are available, disable the box

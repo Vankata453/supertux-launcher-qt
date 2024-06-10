@@ -40,7 +40,7 @@ Instance::Instance(const QDir& parent_dir, const std::string& id, const std::str
   m_name(name),
   m_version(Version::s_versions.at(version)),
   m_time_created(QDateTime::currentDateTime()), // Current time
-  m_install_method(m_version->get_install_methods().at(version_install_method)),
+  m_install_method(InstallMethod::s_install_methods.at(m_version->get_install_methods().at(version_install_method))),
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id)))
 {
@@ -73,8 +73,8 @@ Instance::load()
 
     std::string install_method;
     mapping.get("install-method", install_method);
-    m_install_method = InstallMethod_from_string(install_method);
-    if (m_install_method == InstallMethod::UNKNOWN)
+    m_install_method = InstallMethod::from_string(install_method);
+    if (m_install_method == InstallMethod::s_install_methods.at(InstallMethod::UNKNOWN))
       throw std::runtime_error("Unknown install method specified!");
   }
   catch (const std::exception& err)
@@ -97,7 +97,7 @@ Instance::save()
   writer.write("name", m_name);
   writer.write("version", m_version->get_name());
   writer.write("created-time", static_cast<int>(m_time_created.toSecsSinceEpoch()));
-  writer.write("install-method", InstallMethod_to_string(m_install_method));
+  writer.write("install-method", m_install_method->get_name());
 
   writer.end_list("supertux-launcher-instance");
 }

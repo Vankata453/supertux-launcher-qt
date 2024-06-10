@@ -57,6 +57,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/external/sexp-cpp)
 
 file(GLOB STL_SOURCE ${PROJECT_SOURCE_DIR}/src/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/dialog/*.cpp
+                     ${PROJECT_SOURCE_DIR}/src/install_method/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/instance/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/util/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/version/*.cpp

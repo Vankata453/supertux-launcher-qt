@@ -22,7 +22,7 @@
 #include <QDateTime>
 #include <QDir>
 
-#include "instance/install_method.hpp"
+#include "install_method/install_method.hpp"
 #include "version/version.hpp"
 
 class Version;
@@ -47,7 +47,7 @@ public:
 
   /* Additional info */
   QDateTime m_time_created;
-  InstallMethod m_install_method;
+  const InstallMethod* m_install_method;
 
 private:
   const QDir& m_parent_dir;
