@@ -33,15 +33,13 @@ class InstallMethod
 public:
   enum Type
   {
-    UNKNOWN = 0,
 #ifdef PLATFORM_WIN
-    MSI_INSTALLER,
+    MSI_INSTALLER = 0,
     EXE_INSTALLER,
+#elifdef PLATFORM_LINUX
+    APPIMAGE = 0,
 #endif
     ZIP_BINARY,
-#ifdef PLATFORM_LINUX
-    APPIMAGE,
-#endif
     SOURCE_BUILD
   };
   static const std::vector<std::string> s_install_method_names;

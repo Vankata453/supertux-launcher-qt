@@ -26,32 +26,27 @@
 #include "install_method/exe_installer.hpp"
 #include "install_method/msi_installer.hpp"
 #include "install_method/source_build.hpp"
-#include "install_method/unknown.hpp"
 #include "install_method/zip_binary.hpp"
 
 const std::vector<std::string> InstallMethod::s_install_method_names = {
-  "unknown",
 #ifdef PLATFORM_WIN
   "msi",
   "exe",
-#endif
-  "zip",
-#ifdef PLATFORM_LINUX
+#elifdef PLATFORM_LINUX
   "appimage",
 #endif
+  "zip",
   "source-build"
 };
 
 const std::unordered_map<InstallMethod::Type, const InstallMethod* const> InstallMethod::s_install_methods = {
-  { UNKNOWN, new install_method::Unknown() },
 #ifdef PLATFORM_WIN
   { MSI_INSTALLER, new install_method::MsiInstaller() },
   { EXE_INSTALLER, new install_method::ExeInstaller() },
-#endif
-  { ZIP_BINARY, new install_method::ZipBinary() },
-#ifdef PLATFORM_LINUX
+#elifdef PLATFORM_LINUX
   { APPIMAGE, new install_method::AppImage() },
 #endif
+  { ZIP_BINARY, new install_method::ZipBinary() },
   { SOURCE_BUILD, new install_method::SourceBuild() }
 };
 
@@ -60,10 +55,7 @@ InstallMethod::from_string(const std::string& name)
 {
   const auto it = std::find(s_install_method_names.begin(), s_install_method_names.end(), name);
   if (it == s_install_method_names.end())
-  {
-    std::cout << "No install method with name \"" << name << "\"!" << std::endl;
-    return s_install_methods.at(UNKNOWN);
-  }
+    throw std::runtime_error("No install method with name \"" + name + "\"!");
 
   return s_install_methods.at(static_cast<Type>(it - s_install_method_names.begin()));
 }

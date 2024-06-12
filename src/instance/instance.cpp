@@ -75,8 +75,6 @@ Instance::load()
     std::string install_method;
     mapping.get("install-method", install_method);
     m_install_method = InstallMethod::from_string(install_method);
-    if (m_install_method == InstallMethod::s_install_methods.at(InstallMethod::UNKNOWN))
-      throw std::runtime_error("Unknown install method specified!");
   }
   catch (const std::exception& err)
   {

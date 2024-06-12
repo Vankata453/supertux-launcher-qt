@@ -45,11 +45,8 @@ Version::Version(const std::string& file) :
     {
       try
       {
-        const InstallMethod* method = InstallMethod::from_string(install_methods_iter.get_key());
-        if (method == InstallMethod::s_install_methods.at(InstallMethod::UNKNOWN))
-          throw std::runtime_error("Unknown install method specified!");
-
-        m_install_methods.emplace(method->get_type(), install_methods_iter.as_mapping());
+        m_install_methods.emplace(InstallMethod::from_string(install_methods_iter.get_key())->get_type(),
+                                  install_methods_iter.as_mapping());
       }
       catch (const std::exception& err)
       {
