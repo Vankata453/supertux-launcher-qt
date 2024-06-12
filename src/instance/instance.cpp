@@ -21,6 +21,7 @@
 #include "util/reader_document.hpp"
 #include "util/reader_mapping.hpp"
 #include "util/writer.hpp"
+#include "version/manager.hpp"
 
 Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_id(id),
@@ -35,12 +36,12 @@ Instance::Instance(const QDir& parent_dir, const std::string& id) :
 }
 
 Instance::Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
-                   Version::Number version, int version_install_method) :
+                   int version_idx, InstallMethod::Type install_method) :
   m_id(id),
   m_name(name),
-  m_version(Version::s_versions.at(version)),
+  m_version(VersionManager::current()->get(version_idx)),
   m_time_created(QDateTime::currentDateTime()), // Current time
-  m_install_method(InstallMethod::s_install_methods.at(m_version->get_install_methods().at(version_install_method))),
+  m_install_method(InstallMethod::s_install_methods.at(install_method)),
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id)))
 {
@@ -65,7 +66,7 @@ Instance::load()
 
     std::string version_name;
     mapping.get("version", version_name);
-    m_version = Version::from_name(version_name);
+    m_version = VersionManager::current()->get(version_name);
 
     int time_created;
     mapping.get("created-time", time_created);
@@ -95,7 +96,7 @@ Instance::save()
   writer.start_list("supertux-launcher-instance");
 
   writer.write("name", m_name);
-  writer.write("version", m_version->get_name());
+  writer.write("version", m_version->m_name);
   writer.write("created-time", static_cast<int>(m_time_created.toSecsSinceEpoch()));
   writer.write("install-method", m_install_method->get_name());
 

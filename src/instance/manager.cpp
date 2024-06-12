@@ -125,7 +125,7 @@ InstanceManager::append_instance_item(const Instance& instance)
 
   appendRow({
       new InstanceItem(instance),
-      new QStandardItem(QString::fromStdString(instance.m_version->get_name())),
+      new QStandardItem(QString::fromStdString(instance.m_version->m_name)),
       time_created
     });
 }

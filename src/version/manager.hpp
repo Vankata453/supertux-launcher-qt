@@ -14,25 +14,31 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "version/v063.hpp"
+#pragma once
 
-namespace version {
+#include "util/currenton.hpp"
 
-v063::v063()
+#include <memory>
+#include <vector>
+
+#include "version/version.hpp"
+
+/** A manager for SuperTux instances. */
+class VersionManager final : public Currenton<VersionManager>
 {
-}
+public:
+  VersionManager();
 
-std::vector<InstallMethod::Type>
-v063::get_install_methods() const
-{
-  return {
-#ifdef PLATFORM_WIN
-    InstallMethod::MSI_INSTALLER
-#elifdef PLATFORM_LINUX
-    InstallMethod::APPIMAGE,
-    InstallMethod::SOURCE_BUILD
-#endif
-  };
-}
+  const Version* get(int index) const;
+  const Version* get(const std::string& name) const;
 
-} // namespace version
+  std::vector<const Version*> get_versions() const;
+  std::vector<std::string> get_version_names() const;
+
+private:
+  std::vector<std::unique_ptr<Version>> m_versions;
+
+private:
+  VersionManager(const VersionManager&) = delete;
+  VersionManager& operator=(const VersionManager&) = delete;
+};

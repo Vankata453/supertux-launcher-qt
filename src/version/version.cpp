@@ -16,36 +16,46 @@
 
 #include "version/version.hpp"
 
-#include <algorithm>
+#include <iostream>
+#include <optional>
 
-/* Versions */
-#include "version/v063.hpp"
+#include "util/reader_document.hpp"
+#include "util/reader_mapping.hpp"
 
-const std::vector<std::string> Version::s_version_names = {
-  "v0.6.3"
-};
-
-const std::unordered_map<Version::Number, const Version* const> Version::s_versions = {
-  { v0_6_3, new version::v063() }
-};
-
-const Version*
-Version::from_name(const std::string& name)
+Version::Version(const std::string& file) :
+  m_name(),
+  m_install_methods()
 {
-  const auto it = std::find(s_version_names.begin(), s_version_names.end(), name);
-  if (it == s_version_names.end())
-    throw std::runtime_error("No version with name \"" + name + "\"!");
+  auto doc = ReaderDocument::from_file(file);
+  auto root = doc.get_root();
+  if (root.get_name() != "supertux-launcher-version")
+    throw std::runtime_error("File is not a \"supertux-launcher-version\" file!");
 
-  return s_versions.at(static_cast<Number>(it - s_version_names.begin()));
-}
+  auto mapping = root.get_mapping();
 
+  mapping.get("name", m_name);
+  if (m_name.empty())
+    throw std::runtime_error("No version name specified!");
 
-Version::Version()
-{
-}
+  std::optional<ReaderMapping> install_methods_mapping;
+  if (mapping.get("install-methods", install_methods_mapping))
+  {
+    auto install_methods_iter = install_methods_mapping->get_iter();
+    while (install_methods_iter.next())
+    {
+      try
+      {
+        const InstallMethod* method = InstallMethod::from_string(install_methods_iter.get_key());
+        if (method == InstallMethod::s_install_methods.at(InstallMethod::UNKNOWN))
+          throw std::runtime_error("Unknown install method specified!");
 
-const std::string&
-Version::get_name() const
-{
-  return s_version_names.at(get_number());
+        m_install_methods.emplace(method->get_type(), install_methods_iter.as_mapping());
+      }
+      catch (const std::exception& err)
+      {
+        std::cout << "Couldn't load install method \"" << install_methods_iter.get_key()
+                  << "\" for version \"" << m_name << "\": " << err.what() << std::endl;
+      }
+    }
+  }
 }

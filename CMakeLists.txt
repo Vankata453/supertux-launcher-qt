@@ -24,10 +24,44 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR})
 
-file(COPY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR})
+# Copy data folders
+
+file(GLOB DATA_SUBDIRS LIST_DIRECTORIES true ${PROJECT_SOURCE_DIR}/data/*)
+list(FILTER DATA_SUBDIRS EXCLUDE REGEX "versions")
+
+file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/data)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data)
+file(COPY ${DATA_SUBDIRS} DESTINATION ${CMAKE_BINARY_DIR}/data)
+
+## Versions
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data/versions)
+if(WIN32)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+    set(TARGET_VERSIONS_DIR "win64")
+  elseif(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
+    set(TARGET_VERSIONS_DIR "win32")
+  else()
+    message(FATAL "Unsupported Windows architecture!")
+  endif()
+elseif(LINUX)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+    set(TARGET_VERSIONS_DIR "linux64")
+  elseif(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
+    set(TARGET_VERSIONS_DIR "linux32")
+  else()
+    message(FATAL "Unsupported Linux architecture!")
+  endif()
+else()
+  message(FATAL "Unsupported operating system!")
+endif()
+file(COPY ${PROJECT_SOURCE_DIR}/data/versions/${TARGET_VERSIONS_DIR}/ DESTINATION ${CMAKE_BINARY_DIR}/data/versions)
 
 # Get Git hash
 

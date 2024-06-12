@@ -19,6 +19,7 @@
 #include <QApplication>
 
 #include "instance/manager.hpp"
+#include "version/manager.hpp"
 #include "window/main.hpp"
 
 int main(int argc, char* argv[])
@@ -26,7 +27,8 @@ int main(int argc, char* argv[])
   try
   {
     /* Currenton instances */
-    InstanceManager manager;
+    VersionManager version_manager;
+    InstanceManager instance_manager;
 
     QApplication app(argc, argv);
 

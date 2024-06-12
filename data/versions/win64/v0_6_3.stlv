@@ -1,0 +1,10 @@
+(supertux-launcher-version
+  (name "v0.6.3")
+  (install-methods
+    (msi
+      (repository "SuperTux/supertux")
+      (tag "v0.6.3")
+      (file "SuperTux-v0.6.3-win64.msi")
+    )
+  )
+)

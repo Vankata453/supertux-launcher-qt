@@ -24,6 +24,7 @@
 
 #include "instance/manager.hpp"
 #include "util/string.hpp"
+#include "version/manager.hpp"
 
 AddInstanceDialog::AddInstanceDialog() :
   QDialog(),
@@ -38,7 +39,7 @@ AddInstanceDialog::AddInstanceDialog() :
   // Add textboxes
   QLineEdit* id_box = add_textbox(TextBox::ID, "ID");
   QLineEdit* name_box = add_textbox(TextBox::NAME, "Name");
-  QComboBox* version_box = add_combobox(ComboBox::VERSION, "Version", util::to_qt_string_list(Version::s_version_names));
+  QComboBox* version_box = add_combobox(ComboBox::VERSION, "Version", util::to_qt_string_list(VersionManager::current()->get_version_names()));
   add_combobox(ComboBox::INSTALL_METHOD, "Install Method", {});
 
   QObject::connect(id_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_id_modified()));
@@ -97,6 +98,10 @@ AddInstanceDialog::get_combobox_value(ComboBox id) const
   const auto it = m_combobox_fields.find(id);
   assert(it != m_combobox_fields.end());
 
+  QVariant data = it->second->itemData(it->second->currentIndex());
+  if (data.isValid())
+    return data.toInt();
+
   return it->second->currentIndex();
 }
 
@@ -144,8 +149,11 @@ AddInstanceDialog::on_version_changed()
 
   // On version change, set the "Install Method" options to the ones specified for the new version
   install_method_box->clear();
-  install_method_box->addItems(InstallMethod::to_display_names(
-    Version::s_versions.at(static_cast<Version::Number>(m_combobox_fields[ComboBox::VERSION]->currentIndex()))->get_install_methods()));
+  for (const auto& [method, _] : VersionManager::current()->get(m_combobox_fields[ComboBox::VERSION]->currentIndex())->m_install_methods)
+  {
+    install_method_box->addItem(QString::fromStdString(InstallMethod::s_install_methods.at(method)->get_display_name()),
+                                QVariant(static_cast<int>(method)));
+  }
 
   // If no methods are available, disable the box
   install_method_box->setEnabled(install_method_box->count() > 0);

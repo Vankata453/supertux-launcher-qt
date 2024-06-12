@@ -17,33 +17,19 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
-#include <vector>
+#include <map>
 
 #include "install_method/install_method.hpp"
-#include "util/platform.hpp"
 
-/** Represents a SuperTux version. */
-class Version
+/** Stores parsed data about a SuperTux version. */
+class Version final
 {
 public:
-  enum Number
-  {
-    v0_6_3 = 0
-  };
-  static const std::vector<std::string> s_version_names;
-  static const std::unordered_map<Number, const Version* const> s_versions;
-
-  static const Version* from_name(const std::string& name);
+  Version(const std::string& file);
 
 public:
-  Version();
-
-  virtual Number get_number() const = 0;
-
-  virtual std::vector<InstallMethod::Type> get_install_methods() const = 0;
-
-  const std::string& get_name() const;
+  std::string m_name;
+  std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
 
 private:
   Version(const Version&) = delete;

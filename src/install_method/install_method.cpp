@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "util/reader_mapping.hpp"
+
 /* Install methods */
 #include "install_method/appimage.hpp"
 #include "install_method/exe_installer.hpp"
@@ -66,19 +68,15 @@ InstallMethod::from_string(const std::string& name)
   return s_install_methods.at(static_cast<Type>(it - s_install_method_names.begin()));
 }
 
-QStringList
-InstallMethod::to_display_names(const std::vector<InstallMethod::Type>& methods)
+
+InstallMethod::Data::Data(const ReaderMapping& mapping) :
+  repository(),
+  tag(),
+  file()
 {
-  QStringList strings;
-
-  strings.reserve(methods.size());
-  std::transform(methods.begin(), methods.end(), std::back_inserter(strings),
-                 [](const InstallMethod::Type& method)
-                 {
-                   return QString::fromStdString(s_install_methods.at(method)->get_display_name());
-                 });
-
-  return strings;
+  mapping.get("repository", repository);
+  mapping.get("tag", tag);
+  mapping.get("file", file);
 }
 
 

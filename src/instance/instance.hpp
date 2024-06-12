@@ -23,7 +23,6 @@
 #include <QDir>
 
 #include "install_method/install_method.hpp"
-#include "version/version.hpp"
 
 class Version;
 
@@ -32,7 +31,7 @@ class Instance final
 public:
   Instance(const QDir& parent_dir, const std::string& id);
   Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
-           Version::Number version, int version_install_method);
+           int version_idx, InstallMethod::Type install_method);
 
   void load();
   void save();

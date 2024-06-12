@@ -24,6 +24,8 @@
 
 #include "util/platform.hpp"
 
+class ReaderMapping;
+
 /** Represents a SuperTux instance install method.
     Install methods provide functions for installing and launching an instance. (TODO) */
 class InstallMethod
@@ -46,7 +48,19 @@ public:
   static const std::unordered_map<Type, const InstallMethod* const> s_install_methods;
 
   static const InstallMethod* from_string(const std::string& method);
-  static QStringList to_display_names(const std::vector<InstallMethod::Type>& methods);
+
+public:
+  struct Data final
+  {
+  public:
+    Data() = delete;
+    Data(const ReaderMapping& mapping);
+
+  public:
+    std::string repository;
+    std::string tag;
+    std::string file;
+  };
 
 public:
   InstallMethod();
