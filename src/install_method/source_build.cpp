@@ -35,10 +35,11 @@ SourceBuild::install(Instance& instance) const
   return {};
 }
 
-void
-SourceBuild::launch(Instance& instance) const
+bool
+SourceBuild::launch(const Instance& instance) const
 {
   // TODO
+  return false;
 }
 
 } // namespace install_method

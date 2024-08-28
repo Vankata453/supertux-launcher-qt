@@ -21,14 +21,19 @@
 
 #include "install_method/install_method.hpp"
 
+class Instance;
+
 /** Stores parsed data about a SuperTux version. */
 class Version final
 {
 public:
   Version(const std::string& file);
 
+  std::string get_run_command(const std::string& path, const Instance& instance) const;
+
 public:
   std::string m_name;
+  std::string m_run_format;
   std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
 
 private:

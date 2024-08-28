@@ -35,10 +35,11 @@ ZipBinary::install(Instance& instance) const
   return {};
 }
 
-void
-ZipBinary::launch(Instance& instance) const
+bool
+ZipBinary::launch(const Instance& instance) const
 {
   // TODO
+  return false;
 }
 
 } // namespace install_method

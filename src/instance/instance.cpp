@@ -16,6 +16,8 @@
 
 #include "instance/instance.hpp"
 
+#include <iostream>
+
 #include <QTimeZone>
 
 #include "util/reader_document.hpp"
@@ -137,7 +139,23 @@ Instance::install()
 }
 
 void
-Instance::launch()
+Instance::launch() const
 {
-  m_install_method->launch(*this);
+  std::cout << std::endl
+            << "========LAUNCHING INSTANCE \"" << m_name << "\" ("
+            << m_version->m_name << ", " << m_install_method->get_display_name()
+            << ")========"
+            << std::endl
+            << std::endl;
+
+  if (m_install_method->launch(*this))
+  {
+    std::cout << std::endl
+              << "Instance \"" << m_name << "\" has quit normally." << std::endl;
+  }
+  else
+  {
+    std::cout << std::endl
+              << "Instance \"" << m_name << "\" has closed unexpectedly!" << std::endl;
+  }
 }

@@ -80,7 +80,7 @@ public:
   virtual void check_valid(const Instance& instance) const = 0;
 
   virtual TransferStatusListPtr install(Instance& instance) const = 0;
-  virtual void launch(Instance& instance) const = 0;
+  virtual bool launch(const Instance& instance) const = 0;
 
 private:
   InstallMethod(const InstallMethod&) = delete;

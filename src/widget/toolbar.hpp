@@ -37,6 +37,7 @@ private Q_SLOTS:
   void on_remove_trigger() const;
   void on_clone_trigger() const;
   void on_options_trigger() const;
+  void on_launch_trigger() const;
 
 private:
   class ToolButton final : public QToolButton
@@ -54,6 +55,7 @@ private:
   ToolButton* m_remove_button;
   ToolButton* m_clone_button;
   ToolButton* m_options_button;
+  ToolButton* m_launch_button;
 
 private:
   ToolBar(const ToolBar&) = delete;

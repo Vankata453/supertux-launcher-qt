@@ -19,11 +19,13 @@
 #include <iostream>
 #include <optional>
 
+#include "instance/instance.hpp"
 #include "util/reader_document.hpp"
 #include "util/reader_mapping.hpp"
 
 Version::Version(const std::string& file) :
   m_name(),
+  m_run_format(),
   m_install_methods()
 {
   auto doc = ReaderDocument::from_file(file);
@@ -36,6 +38,10 @@ Version::Version(const std::string& file) :
   mapping.get("name", m_name);
   if (m_name.empty())
     throw std::runtime_error("No version name specified!");
+
+  mapping.get("run-format", m_run_format);
+  if (m_name.empty())
+    throw std::runtime_error("No run format specified!");
 
   std::optional<ReaderMapping> install_methods_mapping;
   if (mapping.get("install-methods", install_methods_mapping))
@@ -55,4 +61,13 @@ Version::Version(const std::string& file) :
       }
     }
   }
+}
+
+std::string
+Version::get_run_command(const std::string& path, const Instance& instance) const
+{
+  return QString::fromStdString(m_run_format)
+    .arg(QString::fromStdString(path)) // Path to executable
+    .arg(QString::fromStdString(instance.get_data_directory().canonicalPath().toStdString())) // "--userdir"
+    .toStdString();
 }

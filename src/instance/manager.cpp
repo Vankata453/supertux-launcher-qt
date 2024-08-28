@@ -128,9 +128,9 @@ InstanceManager::install(const std::string& id)
 }
 
 void
-InstanceManager::launch(const std::string& id)
+InstanceManager::launch(const std::string& id) const
 {
-  Instance& instance = get_modifiable(id);
+  const Instance& instance = get(id);
   try
   {
     instance.launch();

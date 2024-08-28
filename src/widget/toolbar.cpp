@@ -38,14 +38,15 @@ ToolBar::ToolButton::ToolButton(const std::string& text, const std::string& icon
   setText(QString::fromStdString(text));
   setEnabled(enabled);
 }
-#include "util/downloader.hpp"
+
 
 ToolBar::ToolBar() :
   QToolBar(),
   m_add_button(new ToolButton("Add", "data/images/icons/add.png", true)),
   m_remove_button(new ToolButton("Remove", "data/images/icons/remove.png", false)),
   m_clone_button(new ToolButton("Clone", "data/images/icons/clone.png", false)),
-  m_options_button(new ToolButton("Options", "data/images/icons/options.png", false))
+  m_options_button(new ToolButton("Options", "data/images/icons/options.png", false)),
+  m_launch_button(new ToolButton("Launch", "data/images/icons/launch.png", false))
 {
   setMovable(false);
   setFixedHeight(96);
@@ -57,12 +58,15 @@ ToolBar::ToolBar() :
   addSeparator();
   addWidget(m_clone_button);
   addWidget(m_options_button);
+  addSeparator();
+  addWidget(m_launch_button);
 
   // Create signal mappings
   connect(m_add_button, SIGNAL(clicked()), this, SLOT(on_add_trigger()));
   connect(m_remove_button, SIGNAL(clicked()), this, SLOT(on_remove_trigger()));
   connect(m_clone_button, SIGNAL(clicked()), this, SLOT(on_clone_trigger()));
   connect(m_options_button, SIGNAL(clicked()), this, SLOT(on_options_trigger()));
+  connect(m_launch_button, SIGNAL(clicked()), this, SLOT(on_launch_trigger()));
 }
 
 void
@@ -84,7 +88,7 @@ ToolBar::on_add_trigger() const
     return;
 
   DownloadDialog* download_dialog = new DownloadDialog(
-      "Downloading \"" + InstallMethod::s_install_method_names.at(method) +
+      "Downloading \"" + InstallMethod::s_install_methods.at(method)->get_display_name() +
         "\" for version " + VersionManager::current()->get(version)->m_name + "...",
       "Instance \"" + instance.m_name + "\" is ready!",
       download_status
@@ -145,9 +149,16 @@ ToolBar::on_options_trigger() const
 }
 
 void
+ToolBar::on_launch_trigger() const
+{
+  InstanceManager::current()->launch(MainWindow::current()->get_instance_list()->get_selected_item()->instance.m_id);
+}
+
+void
 ToolBar::toggle_instance_buttons(bool enabled)
 {
   m_remove_button->setEnabled(enabled);
   m_clone_button->setEnabled(enabled);
   m_options_button->setEnabled(enabled);
+  m_launch_button->setEnabled(enabled);
 }

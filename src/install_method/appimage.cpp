@@ -16,12 +16,14 @@
 
 #include "install_method/appimage.hpp"
 
+#ifdef PLATFORM_LINUX
+
 #include "instance/instance.hpp"
 #include "util/downloader.hpp"
 #include "util/string.hpp"
 #include "version/version.hpp"
 
-#ifdef PLATFORM_LINUX
+static const std::string INSTALL_FILENAME = "install.AppImage";
 
 namespace install_method {
 
@@ -39,19 +41,33 @@ TransferStatusListPtr
 AppImage::install(Instance& instance) const
 {
   const InstallMethod::Data& install_data = instance.m_version->m_install_methods.at(APPIMAGE);
+  const std::string local_file = util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME);
 
   TransferStatusPtr status = g_downloader.request_download(
-    "https://github.com/" + install_data.repository + "/releases/download/" + install_data.tag + "/" + install_data.file,
-    util::file_join(instance.get_install_directory().canonicalPath().toStdString(), install_data.file)
-  );
+      "https://github.com/" + install_data.repository + "/releases/download/" + install_data.tag + "/" + install_data.file,
+      local_file
+    );
+  status->then([local_file](bool success)
+    {
+      if (!success)
+        return;
+
+      // Set executable permission for AppImage
+      if (WEXITSTATUS(std::system(("chmod 755 " + local_file).c_str())) != 0)
+        throw std::runtime_error("Error setting executable permission for \"" + local_file + "\"!");
+    });
 
   return TransferStatusListPtr(new TransferStatusList({ status }));
 }
 
-void
-AppImage::launch(Instance& instance) const
+bool
+AppImage::launch(const Instance& instance) const
 {
-  // TODO
+  const std::string command = instance.m_version->get_run_command(
+      util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME),
+      instance
+    );
+  return WEXITSTATUS(std::system(command.c_str())) == 0;
 }
 
 } // namespace install_method

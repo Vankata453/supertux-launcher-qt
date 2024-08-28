@@ -1,5 +1,6 @@
 (supertux-launcher-version
   (name "v0.6.3")
+  (run-format "%1 --userdir %2")
   (install-methods
     (appimage
       (repository "SuperTux/supertux")

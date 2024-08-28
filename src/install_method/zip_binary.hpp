@@ -32,7 +32,7 @@ public:
   void check_valid(const Instance& instance) const override;
 
   TransferStatusListPtr install(Instance& instance) const override;
-  void launch(Instance& instance) const override;
+  bool launch(const Instance& instance) const override;
 
 private:
   ZipBinary(const ZipBinary&) = delete;

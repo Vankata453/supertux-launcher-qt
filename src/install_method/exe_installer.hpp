@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include "install_method/install_method.hpp"
+#include "util/platform.hpp"
 
 #ifdef PLATFORM_WIN
+
+#include "install_method/install_method.hpp"
 
 namespace install_method {
 
@@ -34,7 +36,7 @@ public:
   void check_valid(const Instance& instance) const override;
 
   TransferStatusListPtr install(Instance& instance) const override;
-  void launch(Instance& instance) const override;
+  bool launch(const Instance& instance) const override;
 
 private:
   ExeInstaller(const ExeInstaller&) = delete;
