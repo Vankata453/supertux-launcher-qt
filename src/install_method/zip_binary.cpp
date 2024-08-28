@@ -22,4 +22,23 @@ ZipBinary::ZipBinary()
 {
 }
 
+void
+ZipBinary::check_valid(const Instance& instance) const
+{
+  // TODO
+}
+
+TransferStatusListPtr
+ZipBinary::install(Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+void
+ZipBinary::launch(Instance& instance) const
+{
+  // TODO
+}
+
 } // namespace install_method

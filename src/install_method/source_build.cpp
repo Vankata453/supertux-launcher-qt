@@ -22,4 +22,23 @@ SourceBuild::SourceBuild()
 {
 }
 
+void
+SourceBuild::check_valid(const Instance& instance) const
+{
+  // TODO
+}
+
+TransferStatusListPtr
+SourceBuild::install(Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+void
+SourceBuild::launch(Instance& instance) const
+{
+  // TODO
+}
+
 } // namespace install_method

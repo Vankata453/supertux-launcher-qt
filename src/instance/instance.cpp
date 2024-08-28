@@ -30,9 +30,25 @@ Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_time_created(),
   m_install_method(),
   m_parent_dir(parent_dir),
-  m_dir(parent_dir.filePath(QString::fromStdString(id)))
+  m_dir(parent_dir.filePath(QString::fromStdString(id))),
+  m_install_dir(m_dir.filePath("install")),
+  m_data_dir(m_dir.filePath("data"))
 {
+  if (!m_install_dir.exists())
+    throw std::runtime_error("No \"install\" directory!");
+  if (!m_data_dir.exists())
+    throw std::runtime_error("No \"data\" directory!");
+
   load();
+
+  try
+  {
+    m_install_method->check_valid(*this);
+  }
+  catch (const InstallMethod::InstanceInvalidException& err)
+  {
+    throw std::runtime_error(std::string("Instance is invalid: ") + err.what());
+  }
 }
 
 Instance::Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
@@ -43,9 +59,16 @@ Instance::Instance(const QDir& parent_dir, const std::string& id, const std::str
   m_time_created(QDateTime::currentDateTime()), // Current time
   m_install_method(InstallMethod::s_install_methods.at(install_method)),
   m_parent_dir(parent_dir),
-  m_dir(parent_dir.filePath(QString::fromStdString(id)))
+  m_dir(parent_dir.filePath(QString::fromStdString(id))),
+  m_install_dir(m_dir.filePath("install")),
+  m_data_dir(m_dir.filePath("data"))
 {
   save();
+
+  if (!m_install_dir.exists() && !m_dir.mkdir("install"))
+    throw std::runtime_error("Error creating \"install\" directory for instance \"" + m_id + "\"!");
+  if (!m_data_dir.exists() && !m_dir.mkdir("data"))
+    throw std::runtime_error("Error creating \"data\" directory for instance \"" + m_id + "\"!");
 }
 
 void
@@ -105,4 +128,16 @@ void
 Instance::delete_directory()
 {
   m_dir.removeRecursively();
+}
+
+TransferStatusListPtr
+Instance::install()
+{
+  return m_install_method->install(*this);
+}
+
+void
+Instance::launch()
+{
+  m_install_method->launch(*this);
 }

@@ -29,6 +29,11 @@ public:
 
   std::string get_display_name() const override { return "Source Build"; }
 
+  void check_valid(const Instance& instance) const override;
+
+  TransferStatusListPtr install(Instance& instance) const override;
+  void launch(Instance& instance) const override;
+
 private:
   SourceBuild(const SourceBuild&) = delete;
   SourceBuild& operator=(const SourceBuild&) = delete;

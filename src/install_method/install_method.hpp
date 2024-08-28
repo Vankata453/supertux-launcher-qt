@@ -22,12 +22,14 @@
 
 #include <QStringList>
 
+#include "util/downloader_defines.hpp"
 #include "util/platform.hpp"
 
+class Instance;
 class ReaderMapping;
 
 /** Represents a SuperTux instance install method.
-    Install methods provide functions for installing and launching an instance. (TODO) */
+    Install methods determine how an instance is installed and launched. */
 class InstallMethod
 {
 public:
@@ -60,6 +62,12 @@ public:
     std::string file;
   };
 
+  class InstanceInvalidException final : public std::runtime_error
+  {
+  public:
+    InstanceInvalidException(const std::string& message) : std::runtime_error(message) {}
+  };
+
 public:
   InstallMethod();
 
@@ -67,6 +75,12 @@ public:
 
   const std::string& get_name() const;
   virtual std::string get_display_name() const = 0;
+
+  /** Throws an InstanceInvalidException on failure. */
+  virtual void check_valid(const Instance& instance) const = 0;
+
+  virtual TransferStatusListPtr install(Instance& instance) const = 0;
+  virtual void launch(Instance& instance) const = 0;
 
 private:
   InstallMethod(const InstallMethod&) = delete;

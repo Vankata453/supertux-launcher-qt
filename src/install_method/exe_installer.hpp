@@ -31,6 +31,11 @@ public:
 
   std::string get_display_name() const override { return "EXE Installer"; }
 
+  void check_valid(const Instance& instance) const override;
+
+  TransferStatusListPtr install(Instance& instance) const override;
+  void launch(Instance& instance) const override;
+
 private:
   ExeInstaller(const ExeInstaller&) = delete;
   ExeInstaller& operator=(const ExeInstaller&) = delete;

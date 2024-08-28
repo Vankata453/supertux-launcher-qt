@@ -16,12 +16,42 @@
 
 #include "install_method/appimage.hpp"
 
+#include "instance/instance.hpp"
+#include "util/downloader.hpp"
+#include "util/string.hpp"
+#include "version/version.hpp"
+
 #ifdef PLATFORM_LINUX
 
 namespace install_method {
 
 AppImage::AppImage()
 {
+}
+
+void
+AppImage::check_valid(const Instance& instance) const
+{
+  // TODO
+}
+
+TransferStatusListPtr
+AppImage::install(Instance& instance) const
+{
+  const InstallMethod::Data& install_data = instance.m_version->m_install_methods.at(APPIMAGE);
+
+  TransferStatusPtr status = g_downloader.request_download(
+    "https://github.com/" + install_data.repository + "/releases/download/" + install_data.tag + "/" + install_data.file,
+    util::file_join(instance.get_install_directory().canonicalPath().toStdString(), install_data.file)
+  );
+
+  return TransferStatusListPtr(new TransferStatusList({ status }));
+}
+
+void
+AppImage::launch(Instance& instance) const
+{
+  // TODO
 }
 
 } // namespace install_method

@@ -32,4 +32,45 @@ QStringList to_qt_string_list(const std::vector<std::string>& vector)
   return list;
 }
 
+// From https://github.com/SuperTux/supertux/blob/master/src/util/file_system.cpp
+std::string file_basename(const std::string& filename)
+{
+  std::string::size_type p = filename.find_last_of('/');
+  if (p == std::string::npos)
+    p = filename.find_last_of('\\');
+  if (p == std::string::npos)
+    return filename;
+
+  return filename.substr(p+1, filename.size()-p-1);
+}
+
+// From https://github.com/SuperTux/supertux/blob/master/src/util/file_system.cpp
+std::string file_join(const std::string& lhs, const std::string& rhs)
+{
+  if (lhs.empty())
+  {
+    return rhs;
+  }
+  else if (rhs.empty())
+  {
+    return lhs + "/";
+  }
+  else if (lhs.back() == '/' && rhs.front() != '/')
+  {
+    return lhs + rhs;
+  }
+  else if (lhs.back() != '/' && rhs.front() == '/')
+  {
+    return lhs + rhs;
+  }
+  else if (lhs.back() == '/' && rhs.front() == '/')
+  {
+    return lhs + rhs.substr(1);
+  }
+  else
+  {
+    return lhs + "/" + rhs;
+  }
+}
+
 } // namespace util

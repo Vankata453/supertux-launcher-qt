@@ -24,6 +24,25 @@ ExeInstaller::ExeInstaller()
 {
 }
 
+void
+ExeInstaller::check_valid(const Instance& instance) const
+{
+  // TODO
+}
+
+TransferStatusListPtr
+ExeInstaller::install(Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+void
+ExeInstaller::launch(Instance& instance) const
+{
+  // TODO
+}
+
 } // namespace install_method
 
 #endif

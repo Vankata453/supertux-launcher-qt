@@ -81,6 +81,11 @@ configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/version.h)
 # Find packages
 
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(CURL REQUIRED)
+
+# Library include directories
+
+include_directories(${CURL_INCLUDE_DIR})
 
 # Import libraries
 
@@ -104,3 +109,4 @@ add_executable(supertux-launcher ${STL_SOURCE})
 target_link_libraries(supertux-launcher PUBLIC Qt5::Core)
 target_link_libraries(supertux-launcher PUBLIC Qt5::Widgets)
 target_link_libraries(supertux-launcher PUBLIC sexp)
+target_link_libraries(supertux-launcher PUBLIC ${CURL_LIBRARIES})

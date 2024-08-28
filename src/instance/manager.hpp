@@ -34,7 +34,7 @@ public:
   InstanceManager();
   virtual ~InstanceManager();
 
-  const Instance& get(const std::string& id);
+  const Instance& get(const std::string& id) const;
 
   template<typename... Args>
   const Instance& create(Args&&... args)
@@ -53,6 +53,9 @@ public:
 
   bool exists(const std::string& id) const;
 
+  TransferStatusListPtr install(const std::string& id);
+  void launch(const std::string& id);
+
   std::vector<const Instance*> get_instances() const;
 
 public:
@@ -70,6 +73,8 @@ public:
   };
 
 private:
+  Instance& get_modifiable(const std::string& id) const;
+
   void append_instance_item(const Instance& instance);
   void remove_instance_item(const std::string& id);
 

@@ -24,6 +24,25 @@ MsiInstaller::MsiInstaller()
 {
 }
 
+void
+MsiInstaller::check_valid(const Instance& instance) const
+{
+  // TODO
+}
+
+TransferStatusListPtr
+MsiInstaller::install(Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+void
+MsiInstaller::launch(Instance& instance) const
+{
+  // TODO
+}
+
 } // namespace install_method
 
 #endif

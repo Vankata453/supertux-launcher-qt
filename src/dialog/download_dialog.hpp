@@ -14,16 +14,29 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <ctime>
+#pragma once
+
 #include <string>
 
-#include <QStringList>
+#include <QProgressDialog>
 
-namespace util {
+#include "util/downloader_defines.hpp"
 
-QStringList to_qt_string_list(const std::vector<std::string>& vector);
+class DownloadDialog final : public QProgressDialog
+{
+public:
+  DownloadDialog(const std::string& title, const std::string& success_title,
+                 TransferStatusPtr status);
+  DownloadDialog(const std::string& title, const std::string& success_title,
+                 TransferStatusListPtr status);
 
-std::string file_basename(const std::string& filename);
-std::string file_join(const std::string& lhs, const std::string& rhs);
+  void start();
 
-} // namespace util
+private:
+  TransferStatusListPtr m_status;
+  const std::string m_success_title;
+
+private:
+  DownloadDialog(const DownloadDialog&) = delete;
+  DownloadDialog& operator=(const DownloadDialog&) = delete;
+};

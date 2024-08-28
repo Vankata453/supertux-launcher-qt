@@ -28,6 +28,8 @@ class Version;
 
 class Instance final
 {
+  friend class InstanceManager;
+
 public:
   Instance(const QDir& parent_dir, const std::string& id);
   Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
@@ -36,7 +38,15 @@ public:
   void load();
   void save();
 
+  const QDir& get_directory() const { return m_dir; }
+  const QDir& get_install_directory() const { return m_install_dir; }
+  const QDir& get_data_directory() const { return m_data_dir; }
+
+private:
   void delete_directory();
+
+  TransferStatusListPtr install();
+  void launch();
 
 public:
   /* General info */
@@ -51,6 +61,8 @@ public:
 private:
   const QDir& m_parent_dir;
   QDir m_dir;
+  QDir m_install_dir;
+  QDir m_data_dir;
 
 private:
   Instance(const Instance&) = delete;

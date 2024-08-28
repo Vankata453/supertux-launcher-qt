@@ -22,8 +22,9 @@
 #include <QMouseEvent>
 
 #include "dialog/add_instance.hpp"
+#include "dialog/download_dialog.hpp"
 #include "instance/manager.hpp"
-#include "version/version.hpp"
+#include "version/manager.hpp"
 #include "widget/instance_list.hpp"
 #include "window/main.hpp"
 
@@ -37,7 +38,7 @@ ToolBar::ToolButton::ToolButton(const std::string& text, const std::string& icon
   setText(QString::fromStdString(text));
   setEnabled(enabled);
 }
-
+#include "util/downloader.hpp"
 
 ToolBar::ToolBar() :
   QToolBar(),
@@ -67,16 +68,28 @@ ToolBar::ToolBar() :
 void
 ToolBar::on_add_trigger() const
 {
-  AddInstanceDialog dialog;
-  if (dialog.exec() != QDialog::Accepted)
+  AddInstanceDialog add_dialog;
+  if (add_dialog.exec() != QDialog::Accepted)
     return;
 
-  InstanceManager::current()->create(
-      dialog.get_textbox_value(AddInstanceDialog::TextBox::ID),
-      dialog.get_textbox_value(AddInstanceDialog::TextBox::NAME),
-      dialog.get_combobox_value(AddInstanceDialog::ComboBox::VERSION),
-      static_cast<InstallMethod::Type>(dialog.get_combobox_value(AddInstanceDialog::ComboBox::INSTALL_METHOD))
+  const std::string id = add_dialog.get_textbox_value(AddInstanceDialog::TextBox::ID);
+  const std::string name = add_dialog.get_textbox_value(AddInstanceDialog::TextBox::NAME);
+  const int version = add_dialog.get_combobox_value(AddInstanceDialog::ComboBox::VERSION);
+  const InstallMethod::Type method = static_cast<InstallMethod::Type>(add_dialog.get_combobox_value(AddInstanceDialog::ComboBox::INSTALL_METHOD));
+
+  const Instance& instance = InstanceManager::current()->create(id, name, version, method);
+
+  TransferStatusListPtr download_status = InstanceManager::current()->install(id);
+  if (!download_status)
+    return;
+
+  DownloadDialog* download_dialog = new DownloadDialog(
+      "Downloading \"" + InstallMethod::s_install_method_names.at(method) +
+        "\" for version " + VersionManager::current()->get(version)->m_name + "...",
+      "Instance \"" + instance.m_name + "\" is ready!",
+      download_status
     );
+  download_dialog->start();
 }
 
 void

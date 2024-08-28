@@ -66,8 +66,8 @@ InstanceManager::~InstanceManager()
     instance->save();
 }
 
-const Instance&
-InstanceManager::get(const std::string& id)
+Instance&
+InstanceManager::get_modifiable(const std::string& id) const
 {
   const auto it = std::find_if(m_instances.begin(), m_instances.end(), [id](const auto& instance)
     {
@@ -76,6 +76,12 @@ InstanceManager::get(const std::string& id)
   assert(it != m_instances.end()); // The instance must exist
 
   return **it;
+}
+
+const Instance&
+InstanceManager::get(const std::string& id) const
+{
+  return get_modifiable(id);
 }
 
 void
@@ -104,6 +110,35 @@ InstanceManager::exists(const std::string& id) const
       return instance->m_id == id;
     });
   return it != m_instances.end();
+}
+
+TransferStatusListPtr
+InstanceManager::install(const std::string& id)
+{
+  Instance& instance = get_modifiable(id);
+  try
+  {
+    return instance.install();
+  }
+  catch (const std::exception& err)
+  {
+    std::cout << "Couldn't install instance \"" + id + "\": " << err.what() << std::endl;
+    return {};
+  }
+}
+
+void
+InstanceManager::launch(const std::string& id)
+{
+  Instance& instance = get_modifiable(id);
+  try
+  {
+    instance.launch();
+  }
+  catch (const std::exception& err)
+  {
+    std::cout << "Couldn't launch instance \"" + id + "\": " << err.what() << std::endl;
+  }
 }
 
 std::vector<const Instance*>

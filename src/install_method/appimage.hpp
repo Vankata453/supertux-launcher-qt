@@ -31,6 +31,11 @@ public:
 
   std::string get_display_name() const override { return "AppImage"; }
 
+  void check_valid(const Instance& instance) const override;
+
+  TransferStatusListPtr install(Instance& instance) const override;
+  void launch(Instance& instance) const override;
+
 private:
   AppImage(const AppImage&) = delete;
   AppImage& operator=(const AppImage&) = delete;

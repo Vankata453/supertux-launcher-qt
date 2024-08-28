@@ -31,6 +31,11 @@ public:
 
   std::string get_display_name() const override { return "MSI Installer"; }
 
+  void check_valid(const Instance& instance) const override;
+
+  void install(Instance& instance) const override;
+  void launch(Instance& instance) const override;
+
 private:
   MsiInstaller(const MsiInstaller&) = delete;
   MsiInstaller& operator=(const MsiInstaller&) = delete;
