@@ -37,11 +37,11 @@ ExeInstaller::install(Instance& instance) const
   return {};
 }
 
-bool
+int
 ExeInstaller::launch(const Instance& instance) const
 {
   // TODO
-  return false;
+  return -1;
 }
 
 } // namespace install_method

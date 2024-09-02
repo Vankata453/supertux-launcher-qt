@@ -148,14 +148,16 @@ Instance::launch() const
             << std::endl
             << std::endl;
 
-  if (m_install_method->launch(*this))
+  const int exit_code = m_install_method->launch(*this);
+  if (exit_code == 0)
   {
     std::cout << std::endl
-              << "Instance \"" << m_name << "\" has quit normally." << std::endl;
+              << "Instance \"" << m_name << "\" has quit normally.";
   }
   else
   {
     std::cout << std::endl
-              << "Instance \"" << m_name << "\" has closed unexpectedly!" << std::endl;
+              << "Instance \"" << m_name << "\" has closed unexpectedly!";
   }
+  std::cout << " Exit code: " << exit_code << std::endl;
 }

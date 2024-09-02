@@ -60,14 +60,14 @@ AppImage::install(Instance& instance) const
   return TransferStatusListPtr(new TransferStatusList({ status }));
 }
 
-bool
+int
 AppImage::launch(const Instance& instance) const
 {
   const std::string command = instance.m_version->get_run_command(
       util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME),
       instance
     );
-  return WEXITSTATUS(std::system(command.c_str())) == 0;
+  return WEXITSTATUS(std::system(command.c_str()));
 }
 
 } // namespace install_method

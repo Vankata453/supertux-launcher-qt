@@ -37,11 +37,11 @@ MsiInstaller::install(Instance& instance) const
   return {};
 }
 
-bool
+int
 MsiInstaller::launch(const Instance& instance) const
 {
   // TODO
-  return false;
+  return -1;
 }
 
 } // namespace install_method
