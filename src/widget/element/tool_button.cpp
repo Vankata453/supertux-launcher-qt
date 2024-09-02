@@ -14,34 +14,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "widget/element/tool_button.hpp"
 
-#include "util/currenton.hpp"
-
-#include <QMainWindow>
-
-class InstanceList;
-class OptionsGeneral;
-class ToolBar;
-
-class MainWindow final : public QMainWindow,
-                         public Currenton<MainWindow>
+ToolButton::ToolButton(const std::string& text, const std::string& icon, bool enabled) :
+  QToolButton()
 {
-public:
-  MainWindow();
+  resize(96, 96);
+  setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-  void show_general_options() const;
-
-  inline ToolBar* get_toolbar() const { return m_toolbar; }
-  inline InstanceList* get_instance_list() const { return m_instance_list; }
-
-private:
-  ToolBar* m_toolbar;
-  InstanceList* m_instance_list;
-
-  OptionsGeneral* m_options_general_menu;
-
-private:
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
-};
+  setIcon(QIcon(QString::fromStdString(icon)));
+  setText(QString::fromStdString(text));
+  setEnabled(enabled);
+}

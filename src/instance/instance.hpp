@@ -46,7 +46,7 @@ private:
   void delete_directory();
 
   TransferStatusListPtr install();
-  void launch() const;
+  bool launch() const;
 
 public:
   /* General info */

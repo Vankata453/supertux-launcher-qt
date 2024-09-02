@@ -25,20 +25,9 @@
 #include "dialog/download_dialog.hpp"
 #include "instance/manager.hpp"
 #include "version/manager.hpp"
+#include "widget/element/tool_button.hpp"
 #include "widget/instance_list.hpp"
 #include "window/main.hpp"
-
-ToolBar::ToolButton::ToolButton(const std::string& text, const std::string& icon, bool enabled) :
-  QToolButton()
-{
-  resize(96, 96);
-  setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
-  setIcon(QIcon(QString::fromStdString(icon)));
-  setText(QString::fromStdString(text));
-  setEnabled(enabled);
-}
-
 
 ToolBar::ToolBar() :
   QToolBar(),
@@ -151,7 +140,8 @@ ToolBar::on_options_trigger() const
 void
 ToolBar::on_launch_trigger() const
 {
-  InstanceManager::current()->launch(MainWindow::current()->get_instance_list()->get_selected_item()->instance.m_id);
+  if (!InstanceManager::current()->launch(MainWindow::current()->get_instance_list()->get_selected_item()->instance.m_id))
+    MainWindow::current()->show_general_options();
 }
 
 void

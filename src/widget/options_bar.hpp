@@ -16,32 +16,31 @@
 
 #pragma once
 
-#include "util/currenton.hpp"
+#include <string>
 
-#include <QMainWindow>
+#include <QToolBar>
 
-class InstanceList;
-class OptionsGeneral;
-class ToolBar;
+class QMainWindow;
+class QToolButton;
+class WidgetToolButton;
 
-class MainWindow final : public QMainWindow,
-                         public Currenton<MainWindow>
+class OptionsBar final : public QToolBar
 {
+  Q_OBJECT;
+
 public:
-  MainWindow();
+  OptionsBar(QMainWindow* window);
 
-  void show_general_options() const;
-
-  inline ToolBar* get_toolbar() const { return m_toolbar; }
-  inline InstanceList* get_instance_list() const { return m_instance_list; }
+private Q_SLOTS:
+  void on_trigger();
 
 private:
-  ToolBar* m_toolbar;
-  InstanceList* m_instance_list;
+  QMainWindow* m_window;
+  QToolButton* m_active_button;
 
-  OptionsGeneral* m_options_general_menu;
+  WidgetToolButton* m_log_button;
 
 private:
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
+  OptionsBar(const OptionsBar&) = delete;
+  OptionsBar& operator=(const OptionsBar&) = delete;
 };

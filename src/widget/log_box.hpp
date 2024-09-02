@@ -14,34 +14,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <QPlainTextEdit>
 
-#include "util/currenton.hpp"
-
-#include <QMainWindow>
-
-class InstanceList;
-class OptionsGeneral;
-class ToolBar;
-
-class MainWindow final : public QMainWindow,
-                         public Currenton<MainWindow>
+class LogBox final : public QPlainTextEdit
 {
 public:
-  MainWindow();
-
-  void show_general_options() const;
-
-  inline ToolBar* get_toolbar() const { return m_toolbar; }
-  inline InstanceList* get_instance_list() const { return m_instance_list; }
+  LogBox(QWidget* parent);
 
 private:
-  ToolBar* m_toolbar;
-  InstanceList* m_instance_list;
-
-  OptionsGeneral* m_options_general_menu;
-
-private:
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
+  LogBox(const LogBox&) = delete;
+  LogBox& operator=(const LogBox&) = delete;
 };

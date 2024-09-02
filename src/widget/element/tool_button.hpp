@@ -16,32 +16,14 @@
 
 #pragma once
 
-#include "util/currenton.hpp"
+#include <QToolButton>
 
-#include <QMainWindow>
-
-class InstanceList;
-class OptionsGeneral;
-class ToolBar;
-
-class MainWindow final : public QMainWindow,
-                         public Currenton<MainWindow>
+class ToolButton : public QToolButton
 {
 public:
-  MainWindow();
-
-  void show_general_options() const;
-
-  inline ToolBar* get_toolbar() const { return m_toolbar; }
-  inline InstanceList* get_instance_list() const { return m_instance_list; }
+  ToolButton(const std::string& text, const std::string& icon, bool enabled);
 
 private:
-  ToolBar* m_toolbar;
-  InstanceList* m_instance_list;
-
-  OptionsGeneral* m_options_general_menu;
-
-private:
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
+  ToolButton(const ToolButton&) = delete;
+  ToolButton& operator=(const ToolButton&) = delete;
 };

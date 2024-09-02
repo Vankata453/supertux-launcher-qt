@@ -19,9 +19,8 @@
 #include <string>
 
 #include <QToolBar>
-#include <QToolButton>
 
-class QEvent;
+class ToolButton;
 
 class ToolBar final : public QToolBar
 {
@@ -38,17 +37,6 @@ private Q_SLOTS:
   void on_clone_trigger() const;
   void on_options_trigger() const;
   void on_launch_trigger() const;
-
-private:
-  class ToolButton final : public QToolButton
-  {
-  public:
-    ToolButton(const std::string& text, const std::string& icon, bool enabled);
-
-  private:
-    ToolButton(const ToolButton&) = delete;
-    ToolButton& operator=(const ToolButton&) = delete;
-  };
 
 private:
   ToolButton* m_add_button;

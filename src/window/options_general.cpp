@@ -14,42 +14,22 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "window/main.hpp"
-
-#include <QApplication>
-#include <QLabel>
-#include <QScreen>
-#include <QStatusBar>
-
-#include "version.h"
-
-#include "widget/instance_list.hpp"
-#include "widget/toolbar.hpp"
 #include "window/options_general.hpp"
 
-MainWindow::MainWindow() :
+#include <QScreen>
+
+#include "widget/options_bar.hpp"
+
+OptionsGeneral::OptionsGeneral() :
   QMainWindow(),
-  m_toolbar(new ToolBar),
-  m_instance_list(new InstanceList),
-  m_options_general_menu(new OptionsGeneral)
+  m_options_bar(new OptionsBar(this))
 {
-  setWindowTitle("SuperTux Launcher");
-  resize(800, 600);
+  setWindowTitle("General Options");
+  resize(400, 300);
 
   // Center window on screen
   move(screen()->geometry().center() - frameGeometry().center());
 
   // Add widgets
-  setMenuWidget(m_toolbar);
-  setCentralWidget(m_instance_list);
-
-  // Set up status bar
-  QLabel* version_label = new QLabel("Nightly Build: " + QString(PACKAGE_BUILD_HASH));
-  statusBar()->addPermanentWidget(version_label);
-}
-
-void
-MainWindow::show_general_options() const
-{
-  m_options_general_menu->show();
+  setMenuWidget(m_options_bar);
 }

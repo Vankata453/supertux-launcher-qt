@@ -127,17 +127,18 @@ InstanceManager::install(const std::string& id)
   }
 }
 
-void
+bool
 InstanceManager::launch(const std::string& id) const
 {
   const Instance& instance = get(id);
   try
   {
-    instance.launch();
+    return instance.launch();
   }
   catch (const std::exception& err)
   {
     std::cout << "Couldn't launch instance \"" + id + "\": " << err.what() << std::endl;
+    return false;
   }
 }
 

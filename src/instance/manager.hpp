@@ -54,7 +54,7 @@ public:
   bool exists(const std::string& id) const;
 
   TransferStatusListPtr install(const std::string& id);
-  void launch(const std::string& id) const;
+  bool launch(const std::string& id) const;
 
   std::vector<const Instance*> get_instances() const;
 

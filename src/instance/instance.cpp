@@ -138,7 +138,7 @@ Instance::install()
   return m_install_method->install(*this);
 }
 
-void
+bool
 Instance::launch() const
 {
   std::cout << std::endl
@@ -160,4 +160,6 @@ Instance::launch() const
               << "Instance \"" << m_name << "\" has closed unexpectedly!";
   }
   std::cout << " Exit code: " << exit_code << std::endl;
+
+  return exit_code == 0;
 }

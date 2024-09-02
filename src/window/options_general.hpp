@@ -16,32 +16,19 @@
 
 #pragma once
 
-#include "util/currenton.hpp"
-
 #include <QMainWindow>
 
-class InstanceList;
-class OptionsGeneral;
-class ToolBar;
+class OptionsBar;
 
-class MainWindow final : public QMainWindow,
-                         public Currenton<MainWindow>
+class OptionsGeneral final : public QMainWindow
 {
 public:
-  MainWindow();
-
-  void show_general_options() const;
-
-  inline ToolBar* get_toolbar() const { return m_toolbar; }
-  inline InstanceList* get_instance_list() const { return m_instance_list; }
+  OptionsGeneral();
 
 private:
-  ToolBar* m_toolbar;
-  InstanceList* m_instance_list;
-
-  OptionsGeneral* m_options_general_menu;
+  OptionsBar* m_options_bar;
 
 private:
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
+  OptionsGeneral(const OptionsGeneral&) = delete;
+  OptionsGeneral& operator=(const OptionsGeneral&) = delete;
 };

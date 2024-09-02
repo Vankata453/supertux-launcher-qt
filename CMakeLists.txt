@@ -101,6 +101,7 @@ file(GLOB STL_SOURCE ${PROJECT_SOURCE_DIR}/src/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/util/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/version/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/widget/*.cpp
+                     ${PROJECT_SOURCE_DIR}/src/widget/element/*.cpp
                      ${PROJECT_SOURCE_DIR}/src/window/*.cpp)
 add_executable(supertux-launcher ${STL_SOURCE})
 
