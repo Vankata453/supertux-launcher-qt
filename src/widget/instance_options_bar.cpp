@@ -49,12 +49,12 @@ InstanceOptionsBar::InstanceOptionsBar(QMainWindow* window, Instance& instance) 
   {
     for (const QString& log_file : build_logs)
     {
-      const QDateTime log_time = QDateTime::fromSecsSinceEpoch(QFileInfo(log_file).baseName().toLongLong(), QTimeZone::utc());
+      const QDateTime log_time = QDateTime::fromSecsSinceEpoch(QFileInfo(log_file).baseName().toLongLong());
       m_log_select->insertItem(0, log_time.toString("MMMM dd, yyyy hh:mm:ss") + " [BUILD]", QVariant(instance.get_build_logs_directory().filePath(log_file))); 
     }
     for (const QString& log_file : run_logs)
     {
-      const QDateTime log_time = QDateTime::fromSecsSinceEpoch(QFileInfo(log_file).baseName().toLongLong(), QTimeZone::utc());
+      const QDateTime log_time = QDateTime::fromSecsSinceEpoch(QFileInfo(log_file).baseName().toLongLong());
       m_log_select->insertItem(0, log_time.toString("MMMM dd, yyyy hh:mm:ss"), QVariant(instance.get_run_logs_directory().filePath(log_file))); 
     }
 

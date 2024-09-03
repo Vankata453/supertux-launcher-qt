@@ -122,7 +122,7 @@ Instance::load()
 
     int time_created;
     mapping.get("created-time", time_created);
-    m_time_created = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(time_created), QTimeZone::utc());
+    m_time_created = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(time_created));
 
     std::string install_method;
     mapping.get("install-method", install_method);
@@ -194,11 +194,11 @@ Instance::launch() const
 std::string
 Instance::get_build_log_filename() const
 {
-  return m_build_logs_dir.filePath(QString::number(QDateTime::currentDateTime().toSecsSinceEpoch()) + ".log").toStdString();
+  return m_build_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log").toStdString();
 }
 
 std::string
 Instance::get_run_log_filename() const
 {
-  return m_run_logs_dir.filePath(QString::number(QDateTime::currentDateTime().toSecsSinceEpoch()) + ".log").toStdString();
+  return m_run_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log").toStdString();
 }
