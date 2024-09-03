@@ -22,7 +22,7 @@
 #include "util/string.hpp"
 #include "version/version.hpp"
 
-InstanceManager::InstanceItem::InstanceItem(const Instance& instance_) :
+InstanceManager::InstanceItem::InstanceItem(Instance& instance_) :
   QStandardItem(QString::fromStdString(instance_.m_name)),
   instance(instance_)
 {
@@ -154,7 +154,7 @@ InstanceManager::get_instances() const
 }
 
 void
-InstanceManager::append_instance_item(const Instance& instance)
+InstanceManager::append_instance_item(Instance& instance)
 {
   QStandardItem* time_created = new QStandardItem(instance.m_time_created.toString("MMMM dd, yyyy hh:mm:ss"));
   time_created->setData(instance.m_time_created, Qt::UserRole);

@@ -38,11 +38,19 @@ public:
   void load();
   void save();
 
+  std::string get_build_log_filename() const;
+  std::string get_run_log_filename() const;
+
   const QDir& get_directory() const { return m_dir; }
   const QDir& get_install_directory() const { return m_install_dir; }
   const QDir& get_data_directory() const { return m_data_dir; }
+  const QDir& get_logs_directory() const { return m_logs_dir; }
+  const QDir& get_build_logs_directory() const { return m_build_logs_dir; }
+  const QDir& get_run_logs_directory() const { return m_run_logs_dir; }
 
 private:
+  void initialize();
+
   void delete_directory();
 
   TransferStatusListPtr install();
@@ -63,6 +71,9 @@ private:
   QDir m_dir;
   QDir m_install_dir;
   QDir m_data_dir;
+  QDir m_logs_dir;
+  QDir m_build_logs_dir;
+  QDir m_run_logs_dir;
 
 private:
   Instance(const Instance&) = delete;

@@ -14,22 +14,19 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "window/options_general.hpp"
+#include <QWidget>
 
-#include <QScreen>
+#include <QFormLayout>
 
-#include "widget/options_bar.hpp"
-
-OptionsGeneral::OptionsGeneral() :
-  QMainWindow(),
-  m_options_bar(new OptionsBar(this))
+class FormLayout final : public QWidget
 {
-  setWindowTitle("General Options");
-  resize(400, 300);
+public:
+  FormLayout(QWidget* parent, QWidgetList widgets);
 
-  // Center window on screen
-  move(screen()->geometry().center() - frameGeometry().center());
+private:
+  QFormLayout m_layout;
 
-  // Add widgets
-  setMenuWidget(m_options_bar);
-}
+private:
+  FormLayout(const FormLayout&) = delete;
+  FormLayout& operator=(const FormLayout&) = delete;
+};

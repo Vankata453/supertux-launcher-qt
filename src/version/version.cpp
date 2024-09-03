@@ -20,6 +20,7 @@
 #include <optional>
 
 #include "instance/instance.hpp"
+#include "util/platform.hpp"
 #include "util/reader_document.hpp"
 #include "util/reader_mapping.hpp"
 
@@ -64,10 +65,15 @@ Version::Version(const std::string& file) :
 }
 
 std::string
-Version::get_run_command(const std::string& path, const Instance& instance) const
+Version::get_run_command(const std::string& path, const Instance& instance,
+                         const std::string& log_path) const
 {
   return QString::fromStdString(m_run_format)
     .arg(QString::fromStdString(path)) // Path to executable
     .arg(QString::fromStdString(instance.get_data_directory().canonicalPath().toStdString())) // "--userdir"
-    .toStdString();
+    .toStdString()
+#ifdef PLATFORM_LINUX
+      + " 2>> " + log_path
+#endif
+    ;
 }

@@ -20,6 +20,7 @@
 
 #include <QMainWindow>
 
+class Instance;
 class InstanceList;
 class OptionsGeneral;
 class ToolBar;
@@ -30,7 +31,7 @@ class MainWindow final : public QMainWindow,
 public:
   MainWindow();
 
-  void show_general_options() const;
+  void show_instance_options(Instance& instance) const;
 
   inline ToolBar* get_toolbar() const { return m_toolbar; }
   inline InstanceList* get_instance_list() const { return m_instance_list; }
@@ -38,8 +39,6 @@ public:
 private:
   ToolBar* m_toolbar;
   InstanceList* m_instance_list;
-
-  OptionsGeneral* m_options_general_menu;
 
 private:
   MainWindow(const MainWindow&) = delete;

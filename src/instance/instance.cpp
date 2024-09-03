@@ -34,13 +34,23 @@ Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id))),
   m_install_dir(m_dir.filePath("install")),
-  m_data_dir(m_dir.filePath("data"))
+  m_data_dir(m_dir.filePath("data")),
+  m_logs_dir(m_dir.filePath("logs")),
+  m_build_logs_dir(m_logs_dir.filePath("build")),
+  m_run_logs_dir(m_logs_dir.filePath("run"))
 {
   if (!m_install_dir.exists())
     throw std::runtime_error("No \"install\" directory!");
   if (!m_data_dir.exists())
     throw std::runtime_error("No \"data\" directory!");
+  if (!m_logs_dir.exists() && !m_dir.mkdir("logs"))
+    throw std::runtime_error("Error creating \"logs\" directory for instance \"" + m_id + "\"!");
+  if (!m_build_logs_dir.exists() && !m_logs_dir.mkdir("build"))
+    throw std::runtime_error("Error creating \"logs/build\" directory for instance \"" + m_id + "\"!");
+  if (!m_run_logs_dir.exists() && !m_logs_dir.mkdir("run"))
+    throw std::runtime_error("Error creating \"logs/run\" directory for instance \"" + m_id + "\"!");
 
+  initialize();
   load();
 
   try
@@ -63,14 +73,31 @@ Instance::Instance(const QDir& parent_dir, const std::string& id, const std::str
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id))),
   m_install_dir(m_dir.filePath("install")),
-  m_data_dir(m_dir.filePath("data"))
+  m_data_dir(m_dir.filePath("data")),
+  m_logs_dir(m_dir.filePath("logs")),
+  m_build_logs_dir(m_logs_dir.filePath("build")),
+  m_run_logs_dir(m_logs_dir.filePath("run"))
 {
+  initialize();
   save();
 
   if (!m_install_dir.exists() && !m_dir.mkdir("install"))
     throw std::runtime_error("Error creating \"install\" directory for instance \"" + m_id + "\"!");
   if (!m_data_dir.exists() && !m_dir.mkdir("data"))
     throw std::runtime_error("Error creating \"data\" directory for instance \"" + m_id + "\"!");
+  if (!m_logs_dir.exists() && !m_dir.mkdir("logs"))
+    throw std::runtime_error("Error creating \"logs\" directory for instance \"" + m_id + "\"!");
+  if (!m_build_logs_dir.exists() && !m_logs_dir.mkdir("build"))
+    throw std::runtime_error("Error creating \"logs/build\" directory for instance \"" + m_id + "\"!");
+  if (!m_run_logs_dir.exists() && !m_logs_dir.mkdir("run"))
+    throw std::runtime_error("Error creating \"logs/run\" directory for instance \"" + m_id + "\"!");
+}
+
+void
+Instance::initialize()
+{
+  m_build_logs_dir.setNameFilters({ "*.log" });
+  m_run_logs_dir.setNameFilters({ "*.log" });
 }
 
 void
@@ -162,4 +189,16 @@ Instance::launch() const
   std::cout << " Exit code: " << exit_code << std::endl;
 
   return exit_code == 0;
+}
+
+std::string
+Instance::get_build_log_filename() const
+{
+  return m_build_logs_dir.filePath(QString::number(QDateTime::currentDateTime().toSecsSinceEpoch()) + ".log").toStdString();
+}
+
+std::string
+Instance::get_run_log_filename() const
+{
+  return m_run_logs_dir.filePath(QString::number(QDateTime::currentDateTime().toSecsSinceEpoch()) + ".log").toStdString();
 }

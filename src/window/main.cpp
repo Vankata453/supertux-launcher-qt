@@ -25,13 +25,12 @@
 
 #include "widget/instance_list.hpp"
 #include "widget/toolbar.hpp"
-#include "window/options_general.hpp"
+#include "window/options_instance.hpp"
 
 MainWindow::MainWindow() :
   QMainWindow(),
   m_toolbar(new ToolBar),
-  m_instance_list(new InstanceList),
-  m_options_general_menu(new OptionsGeneral)
+  m_instance_list(new InstanceList)
 {
   setWindowTitle("SuperTux Launcher");
   resize(800, 600);
@@ -49,7 +48,9 @@ MainWindow::MainWindow() :
 }
 
 void
-MainWindow::show_general_options() const
+MainWindow::show_instance_options(Instance& instance) const
 {
-  m_options_general_menu->show();
+  OptionsInstance* window = new OptionsInstance(instance);
+  window->setAttribute(Qt::WA_DeleteOnClose);
+  window->show();
 }

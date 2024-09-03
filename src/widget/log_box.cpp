@@ -16,10 +16,37 @@
 
 #include "widget/log_box.hpp"
 
+#include <QComboBox>
+#include <QFile>
+#include <QTextStream>
+
 LogBox::LogBox(QWidget* parent) :
   QPlainTextEdit(parent)
 {
   setReadOnly(true);
+  setPlainText("No logs available!");
+}
 
-  setPlainText("TODO: Show console output here!");
+void
+LogBox::on_file_change()
+{
+  QComboBox* box = static_cast<QComboBox*>(sender());
+
+  const QVariant data = box->itemData(box->currentIndex());
+  assert(data.isValid());
+
+  set_file(data.toString());
+}
+
+void
+LogBox::set_file(const QString& file)
+{
+  QFile log(file);
+  if (!log.open(QFile::ReadOnly | QFile::Text))
+  {
+    setPlainText("ERROR: Unable to open \"" + file + "\" for read!");
+    return;
+  }
+  QTextStream log_in(&log);
+  setPlainText(log_in.readAll());
 }

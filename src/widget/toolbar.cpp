@@ -134,14 +134,15 @@ ToolBar::on_clone_trigger() const
 void
 ToolBar::on_options_trigger() const
 {
-  // TODO
+  MainWindow::current()->show_instance_options(MainWindow::current()->get_instance_list()->get_selected_item()->instance);
 }
 
 void
 ToolBar::on_launch_trigger() const
 {
-  if (!InstanceManager::current()->launch(MainWindow::current()->get_instance_list()->get_selected_item()->instance.m_id))
-    MainWindow::current()->show_general_options();
+  Instance& instance = MainWindow::current()->get_instance_list()->get_selected_item()->instance;
+  if (!InstanceManager::current()->launch(instance.m_id))
+    MainWindow::current()->show_instance_options(instance);
 }
 
 void

@@ -43,7 +43,7 @@ public:
 
     assert(!exists(instance->m_id)); // The instance must not exist
 
-    const Instance& instance_ref = *instance;
+    Instance& instance_ref = *instance;
     append_instance_item(instance_ref);
 
     m_instances.push_back(std::move(instance));
@@ -62,10 +62,10 @@ public:
   class InstanceItem final : public QStandardItem
   {
   public:
-    InstanceItem(const Instance& instance);
+    InstanceItem(Instance& instance);
 
   public:
-    const Instance& instance;
+    Instance& instance;
 
   private:
     InstanceItem(const InstanceItem&) = delete;
@@ -75,7 +75,7 @@ public:
 private:
   Instance& get_modifiable(const std::string& id) const;
 
-  void append_instance_item(const Instance& instance);
+  void append_instance_item(Instance& instance);
   void remove_instance_item(const std::string& id);
 
 private:

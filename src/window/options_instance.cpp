@@ -14,30 +14,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "window/options_instance.hpp"
 
-#include <string>
-#include <map>
+#include <QScreen>
 
-#include "install_method/install_method.hpp"
+#include "instance/instance.hpp"
+#include "widget/instance_options_bar.hpp"
 
-class Instance;
-
-/** Stores parsed data about a SuperTux version. */
-class Version final
+OptionsInstance::OptionsInstance(Instance& instance) :
+  QMainWindow(),
+  m_instance(instance),
+  m_options_bar(new InstanceOptionsBar(this, instance))
 {
-public:
-  Version(const std::string& file);
+  setWindowTitle("Options: " + QString::fromStdString(m_instance.m_name));
+  resize(600, 400);
 
-  std::string get_run_command(const std::string& path, const Instance& instance,
-                              const std::string& log_path) const;
+  // Center window on screen
+  move(screen()->geometry().center() - frameGeometry().center());
 
-public:
-  std::string m_name;
-  std::string m_run_format;
-  std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
-
-private:
-  Version(const Version&) = delete;
-  Version& operator=(const Version&) = delete;
-};
+  // Add widgets
+  setMenuWidget(m_options_bar);
+}

@@ -14,33 +14,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "widget/form_layout.hpp"
 
-#include <string>
-
-#include <QToolBar>
-
-class QMainWindow;
-class QToolButton;
-class WidgetToolButton;
-
-class OptionsBar final : public QToolBar
+FormLayout::FormLayout(QWidget* parent, QWidgetList widgets) :
+  QWidget(parent),
+  m_layout(this)
 {
-  Q_OBJECT;
-
-public:
-  OptionsBar(QMainWindow* window);
-
-private Q_SLOTS:
-  void on_trigger();
-
-private:
-  QMainWindow* m_window;
-  QToolButton* m_active_button;
-
-  WidgetToolButton* m_log_button;
-
-private:
-  OptionsBar(const OptionsBar&) = delete;
-  OptionsBar& operator=(const OptionsBar&) = delete;
-};
+  for (QWidget* widget : widgets)
+    m_layout.addWidget(widget);
+}

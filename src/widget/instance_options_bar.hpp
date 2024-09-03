@@ -16,19 +16,36 @@
 
 #pragma once
 
-#include <QMainWindow>
+#include <string>
 
-class OptionsBar;
+#include <QToolBar>
 
-class OptionsGeneral final : public QMainWindow
+class Instance;
+class LogBox;
+class QComboBox;
+class QMainWindow;
+class QToolButton;
+class WidgetToolButton;
+
+class InstanceOptionsBar final : public QToolBar
 {
+  Q_OBJECT;
+
 public:
-  OptionsGeneral();
+  InstanceOptionsBar(QMainWindow* window, Instance& instance);
+
+private Q_SLOTS:
+  void on_trigger();
 
 private:
-  OptionsBar* m_options_bar;
+  QMainWindow* m_window;
+  QToolButton* m_active_button;
+  LogBox* m_log_box;
+  QComboBox* m_log_select;
+
+  WidgetToolButton* m_log_button;
 
 private:
-  OptionsGeneral(const OptionsGeneral&) = delete;
-  OptionsGeneral& operator=(const OptionsGeneral&) = delete;
+  InstanceOptionsBar(const InstanceOptionsBar&) = delete;
+  InstanceOptionsBar& operator=(const InstanceOptionsBar&) = delete;
 };

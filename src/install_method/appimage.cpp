@@ -47,13 +47,13 @@ AppImage::install(Instance& instance) const
       "https://github.com/" + install_data.repository + "/releases/download/" + install_data.tag + "/" + install_data.file,
       local_file
     );
-  status->then([local_file](bool success)
+  status->then([local_file, &instance](bool success)
     {
       if (!success)
         return;
 
       // Set executable permission for AppImage
-      if (WEXITSTATUS(std::system(("chmod 755 " + local_file).c_str())) != 0)
+      if (WEXITSTATUS(std::system(("chmod 755 " + local_file + " 2>> " + instance.get_build_log_filename()).c_str())) != 0)
         throw std::runtime_error("Error setting executable permission for \"" + local_file + "\"!");
     });
 
@@ -65,7 +65,8 @@ AppImage::launch(const Instance& instance) const
 {
   const std::string command = instance.m_version->get_run_command(
       util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME),
-      instance
+      instance,
+      instance.get_run_log_filename()
     );
   return WEXITSTATUS(std::system(command.c_str()));
 }

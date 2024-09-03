@@ -16,28 +16,22 @@
 
 #pragma once
 
-#include <string>
-#include <map>
-
-#include "install_method/install_method.hpp"
+#include <QMainWindow>
 
 class Instance;
+class InstanceOptionsBar;
 
-/** Stores parsed data about a SuperTux version. */
-class Version final
+class OptionsInstance final : public QMainWindow
 {
 public:
-  Version(const std::string& file);
-
-  std::string get_run_command(const std::string& path, const Instance& instance,
-                              const std::string& log_path) const;
-
-public:
-  std::string m_name;
-  std::string m_run_format;
-  std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
+  OptionsInstance(Instance& instance);
 
 private:
-  Version(const Version&) = delete;
-  Version& operator=(const Version&) = delete;
+  Instance& m_instance;
+
+  InstanceOptionsBar* m_options_bar;
+
+private:
+  OptionsInstance(const OptionsInstance&) = delete;
+  OptionsInstance& operator=(const OptionsInstance&) = delete;
 };

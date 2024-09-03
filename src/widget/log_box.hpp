@@ -16,10 +16,19 @@
 
 #include <QPlainTextEdit>
 
+class QWidget;
+
 class LogBox final : public QPlainTextEdit
 {
+  Q_OBJECT;
+
 public:
   LogBox(QWidget* parent);
+
+  void set_file(const QString& file);
+
+public Q_SLOTS:
+  void on_file_change();
 
 private:
   LogBox(const LogBox&) = delete;
