@@ -29,6 +29,16 @@
 void
 InstanceProcessHandler::start_process(Instance& instance)
 {
+  if (instance.is_running())
+  {
+    std::stringstream out;
+    out << "Couldn't launch instance \"" << instance.m_id << "\": Instance is already running!";
+    std::cout << out.rdbuf() << std::endl;
+
+    QMessageBox::critical(MainWindow::current(), "Error launching instance!", QString::fromStdString(out.str()));
+    return;
+  }
+
   try
   {
     QProcess* process = instance.create_process();
@@ -55,22 +65,26 @@ InstanceProcessHandler::start_process(Instance& instance)
               << std::endl
               << std::endl;
     process->start();
+
+    instance.m_running = true;
   }
   catch (const std::exception& err)
   {
+    instance.m_running = false;
+
     std::stringstream out;
     out << "Couldn't launch instance \"" << instance.m_id << "\": " << err.what();
     std::cout << out.rdbuf() << std::endl;
 
-    QMessageBox msgBox;
-    msgBox.setText(QString::fromStdString(out.str()));
-    msgBox.exec();
+    QMessageBox::critical(MainWindow::current(), "Error launching instance!", QString::fromStdString(out.str()));
   }
 }
 
 void
 InstanceProcessHandler::on_error(Instance& instance, QProcess::ProcessError err)
 {
+  instance.m_running = false;
+
   if (err == QProcess::Crashed)
     return; // Will be handled by on_finish().
 
@@ -78,14 +92,14 @@ InstanceProcessHandler::on_error(Instance& instance, QProcess::ProcessError err)
   out << "Couldn't launch instance \"" << instance.m_id << "\": " << util::qt::process_error_to_string(err) << std::endl;
   std::cout << out.rdbuf() << std::endl;
 
-  QMessageBox msgBox;
-  msgBox.setText(QString::fromStdString(out.str()));
-  msgBox.exec();
+  QMessageBox::critical(MainWindow::current(), "Error launching instance!", QString::fromStdString(out.str()));
 }
 
 void
 InstanceProcessHandler::on_finish(Instance& instance, int exit_code, QProcess::ExitStatus exit_status)
 {
+  instance.m_running = false;
+
   if (exit_code != 0)
   {
     std::stringstream out;
@@ -93,10 +107,7 @@ InstanceProcessHandler::on_finish(Instance& instance, int exit_code, QProcess::E
     std::cout << std::endl
               << out.rdbuf();
 
-    QMessageBox msgBox;
-    msgBox.setText(QString::fromStdString(out.str()));
-    msgBox.exec();
-
+    QMessageBox::critical(MainWindow::current(), "Instance: Unsuccessful exit", QString::fromStdString(out.str()));
     MainWindow::current()->show_instance_options(instance);
   }
   else if (exit_status == QProcess::CrashExit)
@@ -106,10 +117,7 @@ InstanceProcessHandler::on_finish(Instance& instance, int exit_code, QProcess::E
     std::cout << std::endl
               << out.rdbuf();
 
-    QMessageBox msgBox;
-    msgBox.setText(QString::fromStdString(out.str()));
-    msgBox.exec();
-
+    QMessageBox::critical(MainWindow::current(), "Instance: Unexpected exit", QString::fromStdString(out.str()));
     MainWindow::current()->show_instance_options(instance);
   }
   else

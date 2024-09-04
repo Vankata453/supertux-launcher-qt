@@ -39,6 +39,8 @@ public:
   void load();
   void save();
 
+  inline bool is_running() const { return m_running; }
+
   QString get_build_log_filename() const;
   QString get_run_log_filename() const;
 
@@ -66,6 +68,10 @@ public:
   /* Additional info */
   QDateTime m_time_created;
   const InstallMethod* m_install_method;
+
+private:
+  /* Set by InstanceProcessHandler */
+  bool m_running;
 
 private:
   const QDir& m_parent_dir;

@@ -23,7 +23,7 @@ class InstanceProcessHandler final
 public:
   static void start_process(Instance& instance);
 
-public:
+private:
   static void on_error(Instance& instance, QProcess::ProcessError err);
   static void on_finish(Instance& instance, int exit_code, QProcess::ExitStatus exit_status);
 };

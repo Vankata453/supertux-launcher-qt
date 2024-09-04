@@ -16,6 +16,9 @@
 
 #include "widget/toolbar.hpp"
 
+#include <iostream>
+#include <sstream>
+
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QMessageBox>
@@ -111,7 +114,18 @@ ToolBar::on_remove_trigger() const
         // TODO
         case QMessageBox::Yes:
         case QMessageBox::No:
-          InstanceManager::current()->remove(instance.m_id);
+          try
+          {
+            InstanceManager::current()->remove(instance.m_id);
+          }
+          catch (const std::exception& err)
+          {
+            std::stringstream out;
+            out << "Couldn't remove instance \"" << instance.m_id << "\": " << err.what();
+            std::cout << out.rdbuf() << std::endl;
+
+            QMessageBox::critical(MainWindow::current(), "Error removing instance", QString::fromStdString(out.str()));
+          }
           break;
 
         default:

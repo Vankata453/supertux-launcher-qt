@@ -88,6 +88,9 @@ InstanceManager::get(const std::string& id) const
 void
 InstanceManager::remove(const std::string& id) // TODO: With/without saves
 {
+  if (get(id).is_running())
+    throw std::runtime_error("Instance is currently running!");
+
   remove_instance_item(id);
 
   m_instances.erase(std::remove_if(m_instances.begin(), m_instances.end(),

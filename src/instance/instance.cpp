@@ -31,6 +31,7 @@ Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_version(),
   m_time_created(),
   m_install_method(),
+  m_running(false),
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id))),
   m_install_dir(m_dir.filePath("install")),
@@ -70,6 +71,7 @@ Instance::Instance(const QDir& parent_dir, const std::string& id, const std::str
   m_version(VersionManager::current()->get(version_idx)),
   m_time_created(QDateTime::currentDateTime()), // Current time
   m_install_method(InstallMethod::s_install_methods.at(install_method)),
+  m_running(false),
   m_parent_dir(parent_dir),
   m_dir(parent_dir.filePath(QString::fromStdString(id))),
   m_install_dir(m_dir.filePath("install")),
