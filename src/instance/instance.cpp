@@ -165,40 +165,20 @@ Instance::install()
   return m_install_method->install(*this);
 }
 
-bool
-Instance::launch() const
+QProcess*
+Instance::create_process() const
 {
-  std::cout << std::endl
-            << "========LAUNCHING INSTANCE \"" << m_name << "\" ("
-            << m_version->m_name << ", " << m_install_method->get_display_name()
-            << ")========"
-            << std::endl
-            << std::endl;
-
-  const int exit_code = m_install_method->launch(*this);
-  if (exit_code == 0)
-  {
-    std::cout << std::endl
-              << "Instance \"" << m_name << "\" has quit normally.";
-  }
-  else
-  {
-    std::cout << std::endl
-              << "Instance \"" << m_name << "\" has closed unexpectedly!";
-  }
-  std::cout << " Exit code: " << exit_code << std::endl;
-
-  return exit_code == 0;
+  return m_install_method->create_process(*this);
 }
 
-std::string
+QString
 Instance::get_build_log_filename() const
 {
-  return m_build_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log").toStdString();
+  return m_build_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log");
 }
 
-std::string
+QString
 Instance::get_run_log_filename() const
 {
-  return m_run_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log").toStdString();
+  return m_run_logs_dir.filePath(QString::number(QDateTime::currentSecsSinceEpoch()) + ".log");
 }

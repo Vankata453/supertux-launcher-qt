@@ -53,22 +53,20 @@ AppImage::install(Instance& instance) const
         return;
 
       // Set executable permission for AppImage
-      if (WEXITSTATUS(std::system(("chmod 755 " + local_file + " 2>> " + instance.get_build_log_filename()).c_str())) != 0)
+      if (WEXITSTATUS(std::system(("chmod 755 " + local_file + " 2>> " + instance.get_build_log_filename().toStdString()).c_str())) != 0)
         throw std::runtime_error("Error setting executable permission for \"" + local_file + "\"!");
     });
 
   return TransferStatusListPtr(new TransferStatusList({ status }));
 }
 
-int
-AppImage::launch(const Instance& instance) const
+QProcess*
+AppImage::create_process(const Instance& instance) const
 {
-  const std::string command = instance.m_version->get_run_command(
-      util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME),
-      instance,
-      instance.get_run_log_filename()
-    );
-  return WEXITSTATUS(std::system(command.c_str()));
+  QProcess* process = new QProcess;
+  process->setProgram(QString::fromStdString(util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME)));
+  process->setArguments(instance.m_version->get_run_arguments(instance));
+  return process;
 }
 
 } // namespace install_method

@@ -14,29 +14,31 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "util/qt.hpp"
 
-#include "install_method/install_method.hpp"
+namespace util {
 
-namespace install_method {
+namespace qt {
 
-class SourceBuild final : public InstallMethod
+std::string process_error_to_string(QProcess::ProcessError err)
 {
-public:
-  SourceBuild();
+  switch (err)
+  {
+    case QProcess::FailedToStart:
+      return "Process failed to start!";
+    case QProcess::Crashed:
+      return "Process crashed!";
+    case QProcess::Timedout:
+      return "Process has timed out!";
+    case QProcess::WriteError:
+      return "Error writing to process!";
+    case QProcess::ReadError:
+      return "Error reading from process!";
+    default:
+      return "Unknown error!";
+  }
+}
 
-  Type get_type() const override { return SOURCE_BUILD; }
+} // namespace qt
 
-  std::string get_display_name() const override { return "Source Build"; }
-
-  void check_valid(const Instance& instance) const override;
-
-  TransferStatusListPtr install(Instance& instance) const override;
-  QProcess* create_process(const Instance& instance) const override;
-
-private:
-  SourceBuild(const SourceBuild&) = delete;
-  SourceBuild& operator=(const SourceBuild&) = delete;
-};
-
-} // namespace install_method
+} // namespace util

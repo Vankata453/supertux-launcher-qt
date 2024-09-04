@@ -35,11 +35,11 @@ ZipBinary::install(Instance& instance) const
   return {};
 }
 
-int
-ZipBinary::launch(const Instance& instance) const
+QProcess*
+ZipBinary::create_process(const Instance& instance) const
 {
   // TODO
-  return -1;
+  return nullptr;
 }
 
 } // namespace install_method

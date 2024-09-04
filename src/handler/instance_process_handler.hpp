@@ -14,29 +14,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <QProcess>
 
-#include "install_method/install_method.hpp"
+class Instance;
 
-namespace install_method {
-
-class SourceBuild final : public InstallMethod
+class InstanceProcessHandler final
 {
 public:
-  SourceBuild();
+  static void start_process(Instance& instance);
 
-  Type get_type() const override { return SOURCE_BUILD; }
-
-  std::string get_display_name() const override { return "Source Build"; }
-
-  void check_valid(const Instance& instance) const override;
-
-  TransferStatusListPtr install(Instance& instance) const override;
-  QProcess* create_process(const Instance& instance) const override;
-
-private:
-  SourceBuild(const SourceBuild&) = delete;
-  SourceBuild& operator=(const SourceBuild&) = delete;
+public:
+  static void on_error(Instance& instance, QProcess::ProcessError err);
+  static void on_finish(Instance& instance, int exit_code, QProcess::ExitStatus exit_status);
 };
-
-} // namespace install_method

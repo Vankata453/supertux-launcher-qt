@@ -26,8 +26,9 @@
 
 Version::Version(const std::string& file) :
   m_name(),
-  m_run_format(),
-  m_install_methods()
+  m_install_methods(),
+  m_support_userdir(),
+  m_support_developer_mode()
 {
   auto doc = ReaderDocument::from_file(file);
   auto root = doc.get_root();
@@ -40,9 +41,12 @@ Version::Version(const std::string& file) :
   if (m_name.empty())
     throw std::runtime_error("No version name specified!");
 
-  mapping.get("run-format", m_run_format);
-  if (m_name.empty())
-    throw std::runtime_error("No run format specified!");
+  std::optional<ReaderMapping> support_mapping;
+  if (mapping.get("support", support_mapping))
+  {
+    support_mapping->get("userdir", m_support_userdir);
+    support_mapping->get("developer-mode", m_support_developer_mode);
+  }
 
   std::optional<ReaderMapping> install_methods_mapping;
   if (mapping.get("install-methods", install_methods_mapping))
@@ -64,16 +68,13 @@ Version::Version(const std::string& file) :
   }
 }
 
-std::string
-Version::get_run_command(const std::string& path, const Instance& instance,
-                         const std::string& log_path) const
+QStringList
+Version::get_run_arguments(const Instance& instance) const
 {
-  return QString::fromStdString(m_run_format)
-    .arg(QString::fromStdString(path)) // Path to executable
-    .arg(QString::fromStdString(instance.get_data_directory().canonicalPath().toStdString())) // "--userdir"
-    .toStdString()
-#ifdef PLATFORM_LINUX
-      + " 2>> " + log_path
-#endif
-    ;
+  QStringList args;
+
+  if (m_support_userdir)
+    args << "--userdir" << instance.get_data_directory().canonicalPath();
+
+  return args;
 }

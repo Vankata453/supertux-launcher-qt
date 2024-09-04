@@ -36,7 +36,7 @@ public:
   void check_valid(const Instance& instance) const override;
 
   void install(Instance& instance) const override;
-  int launch(const Instance& instance) const override;
+  QProcess* create_process(const Instance& instance) const override;
 
 private:
   MsiInstaller(const MsiInstaller&) = delete;

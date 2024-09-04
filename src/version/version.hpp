@@ -19,6 +19,8 @@
 #include <string>
 #include <map>
 
+#include <QStringList>
+
 #include "install_method/install_method.hpp"
 
 class Instance;
@@ -29,13 +31,14 @@ class Version final
 public:
   Version(const std::string& file);
 
-  std::string get_run_command(const std::string& path, const Instance& instance,
-                              const std::string& log_path) const;
+  QStringList get_run_arguments(const Instance& instance) const;
 
 public:
   std::string m_name;
-  std::string m_run_format;
   std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
+
+  bool m_support_userdir;
+  bool m_support_developer_mode;
 
 private:
   Version(const Version&) = delete;

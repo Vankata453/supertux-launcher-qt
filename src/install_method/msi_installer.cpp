@@ -37,11 +37,11 @@ MsiInstaller::install(Instance& instance) const
   return {};
 }
 
-int
-MsiInstaller::launch(const Instance& instance) const
+QProcess*
+MsiInstaller::create_process(const Instance& instance) const
 {
   // TODO
-  return -1;
+  return nullptr;
 }
 
 } // namespace install_method

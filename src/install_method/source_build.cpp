@@ -35,11 +35,11 @@ SourceBuild::install(Instance& instance) const
   return {};
 }
 
-int
-SourceBuild::launch(const Instance& instance) const
+QProcess*
+SourceBuild::create_process(const Instance& instance) const
 {
   // TODO
-  return -1;
+  return nullptr;
 }
 
 } // namespace install_method

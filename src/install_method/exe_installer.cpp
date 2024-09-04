@@ -37,11 +37,11 @@ ExeInstaller::install(Instance& instance) const
   return {};
 }
 
-int
-ExeInstaller::launch(const Instance& instance) const
+QProcess*
+ExeInstaller::create_process(const Instance& instance) const
 {
   // TODO
-  return -1;
+  return nullptr;
 }
 
 } // namespace install_method

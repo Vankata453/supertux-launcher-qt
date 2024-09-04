@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "handler/instance_process_handler.hpp"
 #include "util/string.hpp"
 #include "version/version.hpp"
 
@@ -127,19 +128,10 @@ InstanceManager::install(const std::string& id)
   }
 }
 
-bool
-InstanceManager::launch(const std::string& id) const
+void
+InstanceManager::launch(const std::string& id)
 {
-  const Instance& instance = get(id);
-  try
-  {
-    return instance.launch();
-  }
-  catch (const std::exception& err)
-  {
-    std::cout << "Couldn't launch instance \"" + id + "\": " << err.what() << std::endl;
-    return false;
-  }
+  InstanceProcessHandler::start_process(get_modifiable(id));
 }
 
 std::vector<const Instance*>

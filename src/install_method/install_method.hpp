@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <QProcess>
 #include <QStringList>
 
 #include "util/downloader_defines.hpp"
@@ -80,7 +81,7 @@ public:
   virtual void check_valid(const Instance& instance) const = 0;
 
   virtual TransferStatusListPtr install(Instance& instance) const = 0;
-  virtual int launch(const Instance& instance) const = 0;
+  virtual QProcess* create_process(const Instance& instance) const = 0;
 
 private:
   InstallMethod(const InstallMethod&) = delete;

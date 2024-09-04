@@ -29,6 +29,7 @@ class Version;
 class Instance final
 {
   friend class InstanceManager;
+  friend class InstanceProcessHandler;
 
 public:
   Instance(const QDir& parent_dir, const std::string& id);
@@ -38,8 +39,8 @@ public:
   void load();
   void save();
 
-  std::string get_build_log_filename() const;
-  std::string get_run_log_filename() const;
+  QString get_build_log_filename() const;
+  QString get_run_log_filename() const;
 
   const QDir& get_directory() const { return m_dir; }
   const QDir& get_install_directory() const { return m_install_dir; }
@@ -54,7 +55,7 @@ private:
   void delete_directory();
 
   TransferStatusListPtr install();
-  bool launch() const;
+  QProcess* create_process() const;
 
 public:
   /* General info */
