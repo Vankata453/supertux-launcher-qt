@@ -60,6 +60,7 @@ private Q_SLOTS:
   void on_id_modified_by_user();
   void on_name_modified();
   void on_version_changed();
+  void on_pre_release_toggle(int check_state);
 
 private:
   QFormLayout m_layout;

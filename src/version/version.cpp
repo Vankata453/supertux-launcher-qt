@@ -26,6 +26,7 @@
 
 Version::Version(const std::string& file) :
   m_name(),
+  m_pre_release(false),
   m_install_methods(),
   m_support_userdir(),
   m_support_developer_mode()
@@ -40,6 +41,8 @@ Version::Version(const std::string& file) :
   mapping.get("name", m_name);
   if (m_name.empty())
     throw std::runtime_error("No version name specified!");
+
+  mapping.get("pre-release", m_pre_release);
 
   std::optional<ReaderMapping> support_mapping;
   if (mapping.get("support", support_mapping))

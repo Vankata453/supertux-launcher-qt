@@ -1,0 +1,15 @@
+(supertux-launcher-version
+  (name "v0.6.3 Beta 2")
+  (pre-release #t)
+  (support
+    (userdir #t)
+    (developer-mode #t)
+  )
+  (install-methods
+    (msi
+      (repository "SuperTux/supertux")
+      (tag "v0.6.3-beta.2")
+      (file "SuperTux-v0.6.3-beta.2-win64.msi")
+    )
+  )
+)

@@ -16,6 +16,7 @@
 
 #include "dialog/add_instance.hpp"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -39,7 +40,11 @@ AddInstanceDialog::AddInstanceDialog() :
   // Add textboxes
   QLineEdit* id_box = add_textbox(TextBox::ID, "ID");
   QLineEdit* name_box = add_textbox(TextBox::NAME, "Name");
-  QComboBox* version_box = add_combobox(ComboBox::VERSION, "Version", util::to_qt_string_list(VersionManager::current()->get_version_names()));
+  QComboBox* version_box = add_combobox(ComboBox::VERSION, "Version", {});
+
+  QCheckBox* version_pre_release_box = new QCheckBox("Show pre-releases", this);
+  m_layout.addRow("", version_pre_release_box);
+
   add_combobox(ComboBox::INSTALL_METHOD, "Install Method", {});
 
   QObject::connect(id_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_id_modified()));
@@ -47,6 +52,9 @@ AddInstanceDialog::AddInstanceDialog() :
 
   name_box->setFocus();
   QObject::connect(name_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_name_modified()));
+
+  QObject::connect(version_pre_release_box, &QCheckBox::stateChanged, this, &AddInstanceDialog::on_pre_release_toggle);
+  on_pre_release_toggle(Qt::Unchecked); // Initial
 
   QObject::connect(version_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_version_changed()));
   on_version_changed(); // Initial
@@ -98,6 +106,9 @@ AddInstanceDialog::get_combobox_value(ComboBox id) const
   const auto it = m_combobox_fields.find(id);
   assert(it != m_combobox_fields.end());
 
+  if (it->second->currentIndex() < 0)
+    return -1;
+
   QVariant data = it->second->itemData(it->second->currentIndex());
   if (data.isValid())
     return data.toInt();
@@ -147,9 +158,13 @@ AddInstanceDialog::on_version_changed()
 {
   QComboBox* install_method_box = m_combobox_fields[ComboBox::INSTALL_METHOD];
 
+  const int version = get_combobox_value(ComboBox::VERSION);
+  if (version < 0)
+    return;
+
   // On version change, set the "Install Method" options to the ones specified for the new version
   install_method_box->clear();
-  for (const auto& [method, _] : VersionManager::current()->get(m_combobox_fields[ComboBox::VERSION]->currentIndex())->m_install_methods)
+  for (const auto& [method, _] : VersionManager::current()->get(version)->m_install_methods)
   {
     install_method_box->addItem(QString::fromStdString(InstallMethod::s_install_methods.at(method)->get_display_name()),
                                 QVariant(static_cast<int>(method)));
@@ -159,4 +174,21 @@ AddInstanceDialog::on_version_changed()
   install_method_box->setEnabled(install_method_box->count() > 0);
 
   update_ok_button();
+}
+
+void
+AddInstanceDialog::on_pre_release_toggle(int check_state)
+{
+  QComboBox* version_box = m_combobox_fields[ComboBox::VERSION];
+  const auto versions = VersionManager::current()->get_versions();
+
+  version_box->clear();
+  for (int i = 0; i < static_cast<int>(versions.size()); i++)
+  {
+    if (check_state != Qt::Checked && versions[i]->m_pre_release)
+      continue;
+
+    version_box->addItem(QString::fromStdString(versions[i]->m_name),
+                         QVariant(i));
+  }
 }

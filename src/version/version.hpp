@@ -35,6 +35,7 @@ public:
 
 public:
   std::string m_name;
+  bool m_pre_release;
   std::map<InstallMethod::Type, InstallMethod::Data> m_install_methods;
 
   bool m_support_userdir;
