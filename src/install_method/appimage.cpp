@@ -34,7 +34,9 @@ AppImage::AppImage()
 void
 AppImage::check_valid(const Instance& instance) const
 {
-  // TODO
+  QFileInfo install_file(QString::fromStdString(util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME)));
+  if (!install_file.exists() || !install_file.isFile())
+    throw InstanceInvalidException("\"" + INSTALL_FILENAME + "\" is missing!");
 }
 
 TransferStatusListPtr
