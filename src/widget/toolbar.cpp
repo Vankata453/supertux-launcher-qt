@@ -109,14 +109,16 @@ ToolBar::on_remove_trigger() const
       delete_data_box.setInformativeText("If you choose not to, a new instance with the same ID can use it.");
       delete_data_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
       delete_data_box.setDefaultButton(QMessageBox::Abort);
-      switch (delete_data_box.exec())
+
+      const int result = delete_data_box.exec();
+      switch (result)
       {
         // TODO
         case QMessageBox::Yes:
         case QMessageBox::No:
           try
           {
-            InstanceManager::current()->remove(instance.m_id);
+            InstanceManager::current()->remove(instance.m_id, result == QMessageBox::Yes);
           }
           catch (const std::exception& err)
           {

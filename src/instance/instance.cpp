@@ -25,6 +25,8 @@
 #include "util/writer.hpp"
 #include "version/manager.hpp"
 
+const QString Instance::s_data_filename = "data.stlid";
+
 Instance::Instance(const QDir& parent_dir, const std::string& id) :
   m_id(id),
   m_name("<unnamed>"),
@@ -107,7 +109,7 @@ Instance::load()
 {
   try
   {
-    auto doc = ReaderDocument::from_file(m_dir.filePath("data.stlid").toStdString());
+    auto doc = ReaderDocument::from_file(m_dir.filePath(s_data_filename).toStdString());
     auto root = doc.get_root();
     if (root.get_name() != "supertux-launcher-instance")
       throw std::runtime_error("File is not a \"supertux-launcher-instance\" file!");
@@ -144,7 +146,7 @@ Instance::save()
     throw std::runtime_error("Error creating directory for instance \"" + m_id + "\"!");
 
   // Save instance data file
-  Writer writer(m_dir.filePath("data.stlid").toStdString());
+  Writer writer(m_dir.filePath(s_data_filename).toStdString());
   writer.start_list("supertux-launcher-instance");
 
   writer.write("name", m_name);
@@ -156,9 +158,23 @@ Instance::save()
 }
 
 void
-Instance::delete_directory()
+Instance::delete_directory(bool with_data)
 {
-  m_dir.removeRecursively();
+  if (with_data)
+  {
+    m_dir.removeRecursively();
+    return;
+  }
+
+  // Remove everything, except the data folder
+  for (const QString file : m_dir.entryList(QDir::Files))
+  {
+    m_dir.remove(file);
+  }
+  m_install_dir.removeRecursively();
+  m_logs_dir.removeRecursively();
+  m_build_logs_dir.removeRecursively();
+  m_run_logs_dir.removeRecursively();
 }
 
 TransferStatusListPtr

@@ -49,7 +49,7 @@ public:
     m_instances.push_back(std::move(instance));
     return instance_ref;
   }
-  void remove(const std::string& id);
+  void remove(const std::string& id, bool with_data);
 
   bool exists(const std::string& id) const;
 

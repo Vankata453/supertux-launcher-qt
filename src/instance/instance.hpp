@@ -32,6 +32,9 @@ class Instance final
   friend class InstanceProcessHandler;
 
 public:
+  static const QString s_data_filename;
+
+public:
   Instance(const QDir& parent_dir, const std::string& id);
   Instance(const QDir& parent_dir, const std::string& id, const std::string& name,
            int version_idx, InstallMethod::Type install_method);
@@ -54,7 +57,7 @@ public:
 private:
   void initialize();
 
-  void delete_directory();
+  void delete_directory(bool with_data);
 
   TransferStatusListPtr install();
   QProcess* create_process() const;

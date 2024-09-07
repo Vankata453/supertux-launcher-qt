@@ -47,6 +47,10 @@ InstanceManager::InstanceManager() :
   // Load all instances
   for (const QString& instance_dir : m_instances_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name))
   {
+    QFileInfo instance_info(QDir(m_instances_dir.filePath(instance_dir)).filePath(Instance::s_data_filename));
+    if (!instance_info.exists() || !instance_info.isFile())
+      continue; // Do not try to load instances from folders with a missing info file
+
     try
     {
       auto instance = std::make_unique<Instance>(m_instances_dir, instance_dir.toStdString()); // The directory name represents the ID
@@ -86,7 +90,7 @@ InstanceManager::get(const std::string& id) const
 }
 
 void
-InstanceManager::remove(const std::string& id) // TODO: With/without saves
+InstanceManager::remove(const std::string& id, bool with_data)
 {
   if (get(id).is_running())
     throw std::runtime_error("Instance is currently running!");
@@ -94,11 +98,11 @@ InstanceManager::remove(const std::string& id) // TODO: With/without saves
   remove_instance_item(id);
 
   m_instances.erase(std::remove_if(m_instances.begin(), m_instances.end(),
-                                   [id](const auto& instance)
+                                   [id, with_data](const auto& instance)
                                    {
                                      if (instance->m_id == id)
                                      {
-                                       instance->delete_directory();
+                                       instance->delete_directory(with_data);
                                        return true;
                                      }
                                      return false;
