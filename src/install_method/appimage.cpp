@@ -20,6 +20,7 @@
 
 #include "instance/instance.hpp"
 #include "util/downloader.hpp"
+#include "util/qt.hpp"
 #include "util/string.hpp"
 #include "version/version.hpp"
 
@@ -34,41 +35,49 @@ AppImage::AppImage()
 void
 AppImage::check_valid(const Instance& instance) const
 {
-  QFileInfo install_file(QString::fromStdString(util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME)));
+  QFileInfo install_file(QString::fromStdString(get_local_file(instance)));
   if (!install_file.exists() || !install_file.isFile())
     throw InstanceInvalidException("\"" + INSTALL_FILENAME + "\" is missing!");
 }
 
 TransferStatusListPtr
-AppImage::install(Instance& instance) const
+AppImage::request_download(const Instance& instance) const
 {
   const InstallMethod::Data& install_data = instance.m_version->m_install_methods.at(APPIMAGE);
-  const std::string local_file = util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME);
 
   TransferStatusPtr status = g_downloader.request_download(
       "https://github.com/" + install_data.repository + "/releases/download/" + install_data.tag + "/" + install_data.file,
-      local_file
+      get_local_file(instance)
     );
-  status->then([local_file, &instance](bool success)
-    {
-      if (!success)
-        return;
-
-      // Set executable permission for AppImage
-      if (WEXITSTATUS(std::system(("chmod 755 " + local_file + " 2>> " + instance.get_build_log_filename().toStdString()).c_str())) != 0)
-        throw std::runtime_error("Error setting executable permission for \"" + local_file + "\"!");
-    });
-
   return TransferStatusListPtr(new TransferStatusList({ status }));
 }
 
+QList<QProcess*>
+AppImage::create_install_processes(const Instance& instance) const
+{
+  QList<QProcess*> processes;
+
+  processes
+    // Set executable permission for AppImage
+    << util::qt::command_to_process("chmod -v 755 " + QString::fromStdString(get_local_file(instance)));
+
+  return processes;
+}
+
 QProcess*
-AppImage::create_process(const Instance& instance) const
+AppImage::create_run_process(const Instance& instance) const
 {
   QProcess* process = new QProcess;
-  process->setProgram(QString::fromStdString(util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME)));
+  process->setProgram(QString::fromStdString(get_local_file(instance)));
   process->setArguments(instance.m_version->get_run_arguments(instance));
   return process;
+}
+
+
+std::string
+AppImage::get_local_file(const Instance& instance)
+{
+  return util::file_join(instance.get_install_directory().canonicalPath().toStdString(), INSTALL_FILENAME);
 }
 
 } // namespace install_method

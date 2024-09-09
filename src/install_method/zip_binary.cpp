@@ -29,14 +29,21 @@ ZipBinary::check_valid(const Instance& instance) const
 }
 
 TransferStatusListPtr
-ZipBinary::install(Instance& instance) const
+ZipBinary::request_download(const Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+QList<QProcess*>
+ZipBinary::create_install_processes(const Instance& instance) const
 {
   // TODO
   return {};
 }
 
 QProcess*
-ZipBinary::create_process(const Instance& instance) const
+ZipBinary::create_run_process(const Instance& instance) const
 {
   // TODO
   return nullptr;

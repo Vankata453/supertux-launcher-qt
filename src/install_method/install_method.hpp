@@ -80,8 +80,10 @@ public:
   /** Throws an InstanceInvalidException on failure. */
   virtual void check_valid(const Instance& instance) const = 0;
 
-  virtual TransferStatusListPtr install(Instance& instance) const = 0;
-  virtual QProcess* create_process(const Instance& instance) const = 0;
+  virtual TransferStatusListPtr request_download(const Instance& instance) const = 0;
+  virtual QList<QProcess*> create_install_processes(const Instance& instance) const = 0;
+
+  virtual QProcess* create_run_process(const Instance& instance) const = 0;
 
 private:
   InstallMethod(const InstallMethod&) = delete;

@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "handler/instance_process_handler.hpp"
+#include "util/downloader.hpp"
 #include "util/string.hpp"
 #include "version/version.hpp"
 
@@ -118,21 +119,6 @@ InstanceManager::exists(const std::string& id) const
       return instance->m_id == id;
     });
   return it != m_instances.end();
-}
-
-TransferStatusListPtr
-InstanceManager::install(const std::string& id)
-{
-  Instance& instance = get_modifiable(id);
-  try
-  {
-    return instance.install();
-  }
-  catch (const std::exception& err)
-  {
-    std::cout << "Couldn't install instance \"" + id + "\": " << err.what() << std::endl;
-    return {};
-  }
 }
 
 void

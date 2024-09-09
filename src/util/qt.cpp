@@ -16,9 +16,42 @@
 
 #include "util/qt.hpp"
 
+#include "util/platform.hpp"
+
 namespace util {
 
 namespace qt {
+
+QProcess* command_to_process(const QString& command)
+{
+  QProcess* process = new QProcess;
+
+  process->setProgram(
+#ifdef PLATFORM_WIN
+    "cmd"
+#elifdef PLATFORM_LINUX
+    "sh"
+#endif
+  );
+  process->setArguments(
+    QStringList()
+#ifdef PLATFORM_WIN
+      << "/c"
+#elifdef PLATFORM_LINUX
+      << "-c"
+#endif
+      << command
+  );
+
+  return process;
+}
+
+QStringList get_command_process_arguments(const QProcess* process)
+{
+  QStringList args = process->arguments();
+  args.removeFirst(); // First argument is the command specifier for the command line.
+  return args;
+}
 
 std::string process_error_to_string(QProcess::ProcessError err)
 {

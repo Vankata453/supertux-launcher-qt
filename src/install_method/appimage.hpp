@@ -35,8 +35,13 @@ public:
 
   void check_valid(const Instance& instance) const override;
 
-  TransferStatusListPtr install(Instance& instance) const override;
-  QProcess* create_process(const Instance& instance) const override;
+  TransferStatusListPtr request_download(const Instance& instance) const override;
+  QList<QProcess*> create_install_processes(const Instance& instance) const override;
+
+  QProcess* create_run_process(const Instance& instance) const override;
+
+private:
+  static std::string get_local_file(const Instance& instance);
 
 private:
   AppImage(const AppImage&) = delete;

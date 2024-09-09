@@ -41,7 +41,7 @@ InstanceProcessHandler::start_process(Instance& instance)
 
   try
   {
-    QProcess* process = instance.create_process();
+    QProcess* process = instance.create_run_process();
 
     const QString log_file = instance.get_run_log_filename();
     process->setStandardOutputFile(log_file, QIODevice::Append);

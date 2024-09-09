@@ -28,6 +28,7 @@ class Version;
 
 class Instance final
 {
+  friend class InstanceInstallDialog;
   friend class InstanceManager;
   friend class InstanceProcessHandler;
 
@@ -59,8 +60,10 @@ private:
 
   void delete_directory(bool with_data);
 
-  TransferStatusListPtr install();
-  QProcess* create_process() const;
+  TransferStatusListPtr request_download() const;
+  QList<QProcess*> create_install_processes() const;
+
+  QProcess* create_run_process() const;
 
 public:
   /* General info */

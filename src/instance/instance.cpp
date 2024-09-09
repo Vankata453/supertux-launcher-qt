@@ -178,15 +178,21 @@ Instance::delete_directory(bool with_data)
 }
 
 TransferStatusListPtr
-Instance::install()
+Instance::request_download() const
 {
-  return m_install_method->install(*this);
+  return m_install_method->request_download(*this);
+}
+
+QList<QProcess*>
+Instance::create_install_processes() const
+{
+  return m_install_method->create_install_processes(*this);
 }
 
 QProcess*
-Instance::create_process() const
+Instance::create_run_process() const
 {
-  return m_install_method->create_process(*this);
+  return m_install_method->create_run_process(*this);
 }
 
 QString

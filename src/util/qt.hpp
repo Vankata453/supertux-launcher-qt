@@ -22,6 +22,8 @@ namespace util {
 
 namespace qt {
 
+QProcess* command_to_process(const QString& command);
+QStringList get_command_process_arguments(const QProcess* process);
 std::string process_error_to_string(QProcess::ProcessError err);
 
 } // namespace qt

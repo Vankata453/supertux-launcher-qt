@@ -35,8 +35,10 @@ public:
 
   void check_valid(const Instance& instance) const override;
 
-  void install(Instance& instance) const override;
-  QProcess* create_process(const Instance& instance) const override;
+  TransferStatusListPtr request_download(const Instance& instance) const override;
+  QList<QProcess*> create_install_processes(const Instance& instance) const override;
+
+  QProcess* create_run_process(const Instance& instance) const override;
 
 private:
   MsiInstaller(const MsiInstaller&) = delete;

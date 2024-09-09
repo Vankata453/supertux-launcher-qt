@@ -29,14 +29,21 @@ SourceBuild::check_valid(const Instance& instance) const
 }
 
 TransferStatusListPtr
-SourceBuild::install(Instance& instance) const
+SourceBuild::request_download(const Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+QList<QProcess*>
+SourceBuild::create_install_processes(const Instance& instance) const
 {
   // TODO
   return {};
 }
 
 QProcess*
-SourceBuild::create_process(const Instance& instance) const
+SourceBuild::create_run_process(const Instance& instance) const
 {
   // TODO
   return nullptr;

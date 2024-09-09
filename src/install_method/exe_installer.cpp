@@ -31,14 +31,21 @@ ExeInstaller::check_valid(const Instance& instance) const
 }
 
 TransferStatusListPtr
-ExeInstaller::install(Instance& instance) const
+ExeInstaller::request_download(const Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+QList<QProcess*>
+ExeInstaller::create_install_processes(const Instance& instance) const
 {
   // TODO
   return {};
 }
 
 QProcess*
-ExeInstaller::create_process(const Instance& instance) const
+ExeInstaller::create_run_process(const Instance& instance) const
 {
   // TODO
   return nullptr;

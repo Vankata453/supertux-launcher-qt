@@ -25,9 +25,8 @@
 #include <QMouseEvent>
 
 #include "dialog/add_instance.hpp"
-#include "dialog/download_dialog.hpp"
+#include "dialog/instance_install_dialog.hpp"
 #include "instance/manager.hpp"
-#include "version/manager.hpp"
 #include "widget/element/tool_button.hpp"
 #include "widget/instance_list.hpp"
 #include "window/main.hpp"
@@ -75,17 +74,8 @@ ToolBar::on_add_trigger() const
 
   const Instance& instance = InstanceManager::current()->create(id, name, version, method);
 
-  TransferStatusListPtr download_status = InstanceManager::current()->install(id);
-  if (!download_status)
-    return;
-
-  DownloadDialog* download_dialog = new DownloadDialog(
-      "Downloading \"" + InstallMethod::s_install_methods.at(method)->get_display_name() +
-        "\" for version " + VersionManager::current()->get(version)->m_name + "...",
-      "Instance \"" + instance.m_name + "\" is ready!",
-      download_status
-    );
-  download_dialog->start();
+  InstanceInstallDialog* install_dialog = new InstanceInstallDialog(MainWindow::current(), instance);
+  install_dialog->start();
 }
 
 void

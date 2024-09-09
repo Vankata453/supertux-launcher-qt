@@ -31,14 +31,21 @@ MsiInstaller::check_valid(const Instance& instance) const
 }
 
 TransferStatusListPtr
-MsiInstaller::install(Instance& instance) const
+MsiInstaller::request_download(const Instance& instance) const
+{
+  // TODO
+  return {};
+}
+
+QList<QProcess*>
+MsiInstaller::create_install_processes(const Instance& instance) const
 {
   // TODO
   return {};
 }
 
 QProcess*
-MsiInstaller::create_process(const Instance& instance) const
+MsiInstaller::create_run_process(const Instance& instance) const
 {
   // TODO
   return nullptr;
