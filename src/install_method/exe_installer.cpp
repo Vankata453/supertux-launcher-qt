@@ -37,8 +37,15 @@ ExeInstaller::request_download(const Instance& instance) const
   return {};
 }
 
+InstanceConfigureInstall*
+ExeInstaller::create_configure_install_dialog(const Instance& instance) const
+{
+  // TODO
+  return nullptr;
+}
+
 QList<QProcess*>
-ExeInstaller::create_install_processes(const Instance& instance) const
+ExeInstaller::create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const
 {
   // TODO
   return {};

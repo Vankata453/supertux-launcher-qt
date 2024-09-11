@@ -27,6 +27,7 @@
 #include "util/platform.hpp"
 
 class Instance;
+class InstanceConfigureInstall;
 class ReaderMapping;
 
 /** Represents a SuperTux instance install method.
@@ -81,7 +82,10 @@ public:
   virtual void check_valid(const Instance& instance) const = 0;
 
   virtual TransferStatusListPtr request_download(const Instance& instance) const = 0;
-  virtual QList<QProcess*> create_install_processes(const Instance& instance) const = 0;
+
+  virtual bool has_install_processes() const = 0;
+  virtual InstanceConfigureInstall* create_configure_install_dialog(const Instance& instance) const = 0;
+  virtual QList<QProcess*> create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const = 0;
 
   virtual QProcess* create_run_process(const Instance& instance) const = 0;
 

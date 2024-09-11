@@ -61,7 +61,10 @@ private:
   void delete_directory(bool with_data);
 
   TransferStatusListPtr request_download() const;
-  QList<QProcess*> create_install_processes() const;
+
+  bool has_install_processes() const;
+  InstanceConfigureInstall* create_configure_install_dialog() const;
+  QList<QProcess*> create_install_processes(const InstanceConfigureInstall* config) const;
 
   QProcess* create_run_process() const;
 

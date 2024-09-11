@@ -16,8 +16,7 @@ CollapseButton::CollapseButton(QWidget* parent, int max_content_height, int anim
   m_animation_duration(animation_duration),
   m_content(),
   m_animator(),
-  m_animation(),
-  m_parent_animation()
+  m_animation()
 {
   setCheckable(true);
   setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -47,6 +46,13 @@ CollapseButton::set_content(QWidget* content)
 
   if (!isChecked())
     m_content->setMaximumHeight(0);
+}
+
+void
+CollapseButton::set_checked(bool checked)
+{
+  if (isChecked() != checked)
+    on_toggle(isChecked());
 }
 
 void

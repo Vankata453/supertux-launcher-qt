@@ -31,6 +31,8 @@ public:
   void set_max_content_height(int height) { m_max_content_height = height; }
   void set_animation_duration(int duration) { m_animation_duration = duration; }
 
+  void set_checked(bool checked);
+
 private:
   void on_toggle(bool checked);
 
@@ -41,7 +43,6 @@ private:
   QWidget* m_content;
   QParallelAnimationGroup m_animator;
   QPropertyAnimation* m_animation;
-  QPropertyAnimation* m_parent_animation;
 
 private:
   CollapseButton(const CollapseButton&) = delete;

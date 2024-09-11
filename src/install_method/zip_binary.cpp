@@ -35,8 +35,15 @@ ZipBinary::request_download(const Instance& instance) const
   return {};
 }
 
+InstanceConfigureInstall*
+ZipBinary::create_configure_install_dialog(const Instance& instance) const
+{
+  // TODO
+  return nullptr;
+}
+
 QList<QProcess*>
-ZipBinary::create_install_processes(const Instance& instance) const
+ZipBinary::create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const
 {
   // TODO
   return {};

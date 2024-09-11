@@ -35,8 +35,15 @@ SourceBuild::request_download(const Instance& instance) const
   return {};
 }
 
+InstanceConfigureInstall*
+SourceBuild::create_configure_install_dialog(const Instance& instance) const
+{
+  // TODO
+  return nullptr;
+}
+
 QList<QProcess*>
-SourceBuild::create_install_processes(const Instance& instance) const
+SourceBuild::create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const
 {
   // TODO
   return {};

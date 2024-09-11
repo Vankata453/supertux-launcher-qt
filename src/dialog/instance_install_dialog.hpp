@@ -28,6 +28,7 @@
 
 class CollapseButton;
 class Instance;
+class InstanceConfigureInstall;
 class QDialogButtonBox;
 class QLabel;
 class QPlainTextEdit;
@@ -49,6 +50,7 @@ private:
   void write_log(const QString data);
 
   void update_download();
+  void init_install(const InstanceConfigureInstall* config);
   void start_install();
 
   void on_cancel();

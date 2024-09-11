@@ -18,6 +18,7 @@
 
 #ifdef PLATFORM_LINUX
 
+#include "dialog/instance_configure_install.hpp"
 #include "instance/instance.hpp"
 #include "util/downloader.hpp"
 #include "util/qt.hpp"
@@ -52,8 +53,14 @@ AppImage::request_download(const Instance& instance) const
   return TransferStatusListPtr(new TransferStatusList({ status }));
 }
 
+InstanceConfigureInstall*
+AppImage::create_configure_install_dialog(const Instance&) const
+{
+  return nullptr;
+}
+
 QList<QProcess*>
-AppImage::create_install_processes(const Instance& instance) const
+AppImage::create_install_processes(const Instance& instance, const InstanceConfigureInstall*) const
 {
   QList<QProcess*> processes;
 

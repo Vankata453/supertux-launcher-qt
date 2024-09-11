@@ -183,10 +183,22 @@ Instance::request_download() const
   return m_install_method->request_download(*this);
 }
 
-QList<QProcess*>
-Instance::create_install_processes() const
+bool
+Instance::has_install_processes() const
 {
-  return m_install_method->create_install_processes(*this);
+  return m_install_method->has_install_processes();
+}
+
+InstanceConfigureInstall*
+Instance::create_configure_install_dialog() const
+{
+  return m_install_method->create_configure_install_dialog(*this);
+}
+
+QList<QProcess*>
+Instance::create_install_processes(const InstanceConfigureInstall* config) const
+{
+  return m_install_method->create_install_processes(*this, config);
 }
 
 QProcess*

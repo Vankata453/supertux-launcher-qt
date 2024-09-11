@@ -36,7 +36,10 @@ public:
   void check_valid(const Instance& instance) const override;
 
   TransferStatusListPtr request_download(const Instance& instance) const override;
-  QList<QProcess*> create_install_processes(const Instance& instance) const override;
+
+  bool has_install_processes() const override { return true; }
+  InstanceConfigureInstall* create_configure_install_dialog(const Instance& instance) const override;
+  QList<QProcess*> create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const override;
 
   QProcess* create_run_process(const Instance& instance) const override;
 

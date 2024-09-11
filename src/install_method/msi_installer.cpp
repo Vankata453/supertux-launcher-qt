@@ -37,8 +37,15 @@ MsiInstaller::request_download(const Instance& instance) const
   return {};
 }
 
+InstanceConfigureInstall*
+MsiInstaller::create_configure_install_dialog(const Instance& instance) const
+{
+  // TODO
+  return nullptr;
+}
+
 QList<QProcess*>
-MsiInstaller::create_install_processes(const Instance& instance) const
+MsiInstaller::create_install_processes(const Instance& instance, const InstanceConfigureInstall* config) const
 {
   // TODO
   return {};

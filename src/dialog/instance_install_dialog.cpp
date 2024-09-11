@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include "dialog/instance_configure_install.hpp"
 #include "instance/instance.hpp"
 #include "util/downloader.hpp"
 #include "util/qt.hpp"
@@ -36,7 +37,7 @@ InstanceInstallDialog::InstanceInstallDialog(QWidget* parent, const Instance& in
   QDialog(parent),
   m_instance(instance),
   m_download_status(instance.request_download()),
-  m_install_processes(instance.create_install_processes()),
+  m_install_processes(),
   m_download_timer(new QTimer(this)),
   m_log_file(),
   m_log_file_stream(&m_log_file),
@@ -66,35 +67,6 @@ InstanceInstallDialog::InstanceInstallDialog(QWidget* parent, const Instance& in
   m_collapse_button->set_text("Details");
   m_collapse_button->set_content(m_install_log_box);
   m_install_log_box->setReadOnly(true);
-
-  /** Set up all install processes for this instance. */
-  for (auto it = m_install_processes.begin(); it != m_install_processes.end(); ++it)
-  {
-    QProcess* process = *it;
-    process->setParent(this);
-
-    QObject::connect(process, &QProcess::readyReadStandardOutput,
-      [this, process]()
-      {
-        write_log(process->readAllStandardOutput());
-      });
-    QObject::connect(process, &QProcess::readyReadStandardError,
-      [this, process]()
-      {
-        write_log(process->readAllStandardError());
-      });
-
-    QObject::connect(process, &QProcess::errorOccurred,
-      [this, process](QProcess::ProcessError err)
-      {
-        on_install_process_error(process, err);
-      });
-    QObject::connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
-      [this, it](int exit_code, QProcess::ExitStatus exit_status)
-      {
-        on_install_process_finish(it, exit_code, exit_status);
-      });
-  }
 
   QObject::connect(m_download_timer, &QTimer::timeout, this, &InstanceInstallDialog::update_download);
 
@@ -137,7 +109,7 @@ InstanceInstallDialog::update_download()
     }
 
     // If there are no install processes to run, the instance is now installed.
-    if (m_install_processes.empty())
+    if (!m_instance.has_install_processes())
     {
       std::stringstream out;
       out << "Instance \"" << m_instance.m_name << "\" was installed successfully!";
@@ -145,18 +117,91 @@ InstanceInstallDialog::update_download()
 
       m_label->setText(QString::fromStdString(out.str()));
       m_cancel_button->setText("Close");
+      return;
     }
 
     /** Stage 2: Show install setup dialog for this instance. */
-    // TODO
+    InstanceConfigureInstall* config = m_instance.create_configure_install_dialog();
+    if (config)
+    {
+      QObject::connect(config, &QDialog::accepted,
+        [this, config]()
+        {
+          init_install(config);
+        });
+      QObject::connect(config, &QDialog::rejected, this, &InstanceInstallDialog::on_cancel);
 
-    /** Stage 3: Start first install process. */
-    m_layout.insertRow(2, m_collapse_button);
-    m_layout.insertRow(3, m_install_log_box);
-    m_collapse_button->show();
-
-    start_install();
+      config->show();
+    }
+    else
+    {
+      init_install(nullptr);
+    }
   }
+}
+
+void
+InstanceInstallDialog::init_install(const InstanceConfigureInstall* config)
+{
+  /** Stage 3: Set up install processes, start the install. */
+  m_layout.insertRow(2, m_collapse_button);
+  m_layout.insertRow(3, m_install_log_box);
+  m_collapse_button->show();
+
+  m_install_processes = m_instance.create_install_processes(config);
+  for (auto it = m_install_processes.begin(); it != m_install_processes.end(); ++it)
+  {
+    QProcess* process = *it;
+    process->setParent(this);
+
+    QObject::connect(process, &QProcess::readyReadStandardOutput,
+      [this, process]()
+      {
+        write_log(process->readAllStandardOutput());
+      });
+    QObject::connect(process, &QProcess::readyReadStandardError,
+      [this, process]()
+      {
+        write_log(process->readAllStandardError());
+      });
+
+    QObject::connect(process, &QProcess::errorOccurred,
+      [this, process](QProcess::ProcessError err)
+      {
+        on_install_process_error(process, err);
+      });
+    QObject::connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
+      [this, it](int exit_code, QProcess::ExitStatus exit_status)
+      {
+        on_install_process_finish(it, exit_code, exit_status);
+      });
+  }
+
+  start_install();
+}
+
+void
+InstanceInstallDialog::start_install()
+{
+  m_label->setText("Installing \"" + QString::fromStdString(m_instance.m_install_method->get_display_name()) + "\"...\n"
+                   "Process 1/" + QString::number(m_install_processes.size()));
+
+  m_retry_button->hide();
+  m_cancel_button->hide();
+  m_progress_bar->setMinimum(0);
+  m_progress_bar->setMaximum(0);
+  m_progress_bar->setValue(0);
+  m_install_log_box->setPlainText(QString());
+
+  // Open a new process log file
+  m_log_file.setFileName(m_instance.get_build_log_filename());
+  m_log_file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
+
+  // Run the first process, which on successful finish will run the next one and etc...
+  m_install_processes.first()->start();
+
+  // Log first process run
+  write_log("> " + util::qt::get_command_process_arguments(m_install_processes.first()).join(" ") + "\n\n");
 }
 
 void
@@ -233,30 +278,6 @@ InstanceInstallDialog::on_cancel()
 }
 
 void
-InstanceInstallDialog::start_install()
-{
-  m_label->setText("Installing \"" + QString::fromStdString(m_instance.m_install_method->get_display_name()) + "\"...\n"
-                   "Process 1/" + QString::number(m_install_processes.size()));
-
-  m_retry_button->hide();
-  m_cancel_button->hide();
-  m_progress_bar->setMinimum(0);
-  m_progress_bar->setMaximum(0);
-  m_progress_bar->setValue(0);
-  m_install_log_box->setPlainText(QString());
-
-  // Open a new process log file
-  m_log_file.setFileName(m_instance.get_build_log_filename());
-  m_log_file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
-
-  // Run the first process, which on successful finish will run the next one and etc...
-  m_install_processes.first()->start();
-
-  // Log first process run
-  write_log("> " + util::qt::get_command_process_arguments(m_install_processes.first()).join(" ") + "\n\n");
-}
-
-void
 InstanceInstallDialog::on_failure(const std::stringstream& out)
 {
   std::cout << out.rdbuf() << std::endl;
@@ -265,8 +286,8 @@ InstanceInstallDialog::on_failure(const std::stringstream& out)
 
   m_label->setText(QString::fromStdString(out.str()));
   m_progress_bar->setMaximum(1);
+  m_collapse_button->set_checked(true);
   m_retry_button->show();
   m_cancel_button->show();
   m_cancel_button->setText("Close");
-  /** TODO: Uncollapse info box */
 }
