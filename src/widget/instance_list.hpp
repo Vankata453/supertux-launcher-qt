@@ -26,18 +26,15 @@ class QSortFilterProxyModel;
 
 class InstanceList final : public QTreeView
 {
-  Q_OBJECT;
-
 public:
   InstanceList();
 
   void paintEvent(QPaintEvent* event) override;
 
-private Q_SLOTS:
-  void on_selection_change() const;
-
-public:
   InstanceManager::InstanceItem* get_selected_item() const;
+
+private:
+  void on_selection_change(const QItemSelection&, const QItemSelection&) const;
 
 private:
   QSortFilterProxyModel* m_proxy_model;

@@ -24,14 +24,12 @@ class ToolButton;
 
 class ToolBar final : public QToolBar
 {
-  Q_OBJECT;
-
 public:
   ToolBar();
 
   void toggle_instance_buttons(bool enabled);
 
-private Q_SLOTS:
+private:
   void on_add_trigger() const;
   void on_remove_trigger() const;
   void on_clone_trigger() const;

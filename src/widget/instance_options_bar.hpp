@@ -29,12 +29,10 @@ class WidgetToolButton;
 
 class InstanceOptionsBar final : public QToolBar
 {
-  Q_OBJECT;
-
 public:
   InstanceOptionsBar(QMainWindow* window, Instance& instance);
 
-private Q_SLOTS:
+private:
   void on_trigger();
 
 private:

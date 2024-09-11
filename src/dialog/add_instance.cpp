@@ -47,22 +47,22 @@ AddInstanceDialog::AddInstanceDialog() :
 
   add_combobox(ComboBox::INSTALL_METHOD, "Install Method", {});
 
-  QObject::connect(id_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_id_modified()));
-  QObject::connect(id_box, SIGNAL(textEdited(const QString&)), this, SLOT(on_id_modified_by_user()));
+  QObject::connect(id_box, &QLineEdit::textChanged, this, &AddInstanceDialog::on_id_modified);
+  QObject::connect(id_box, &QLineEdit::textEdited, this, &AddInstanceDialog::on_id_modified_by_user);
 
   name_box->setFocus();
-  QObject::connect(name_box, SIGNAL(textChanged(const QString&)), this, SLOT(on_name_modified()));
+  QObject::connect(name_box, &QLineEdit::textChanged, this, &AddInstanceDialog::on_name_modified);
 
   QObject::connect(version_pre_release_box, &QCheckBox::stateChanged, this, &AddInstanceDialog::on_pre_release_toggle);
   on_pre_release_toggle(Qt::Unchecked); // Initial
 
-  QObject::connect(version_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_version_changed()));
+  QObject::connect(version_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AddInstanceDialog::on_version_changed);
   on_version_changed(); // Initial
 
   // Add buttons
   m_layout.addRow(m_buttons);
-  QObject::connect(m_buttons, SIGNAL(accepted()), this, SLOT(accept()));
-  QObject::connect(m_buttons, SIGNAL(rejected()), this, SLOT(reject()));
+  QObject::connect(m_buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  QObject::connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
   // Disable "OK" button, until an ID is provided
   m_buttons->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -154,7 +154,7 @@ AddInstanceDialog::on_name_modified()
 }
 
 void
-AddInstanceDialog::on_version_changed()
+AddInstanceDialog::on_version_changed(int)
 {
   QComboBox* install_method_box = m_combobox_fields[ComboBox::INSTALL_METHOD];
 

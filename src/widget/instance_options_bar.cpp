@@ -58,7 +58,7 @@ InstanceOptionsBar::InstanceOptionsBar(QMainWindow* window, Instance& instance) 
       m_log_select->insertItem(0, log_time.toString("MMMM dd, yyyy hh:mm:ss"), QVariant(instance.get_run_logs_directory().filePath(log_file))); 
     }
 
-    QObject::connect(m_log_select, SIGNAL(currentIndexChanged(int)), m_log_box, SLOT(on_file_change()));
+    QObject::connect(m_log_select, qOverload<int>(&QComboBox::currentIndexChanged), m_log_box, &LogBox::on_file_change);
     if (m_log_select->currentIndex() == 0)
       m_log_box->set_file(m_log_select->itemData(0).toString());
     else
@@ -69,7 +69,7 @@ InstanceOptionsBar::InstanceOptionsBar(QMainWindow* window, Instance& instance) 
   addWidget(m_log_button);
 
   // Create signal mappings
-  connect(m_log_button, SIGNAL(clicked()), this, SLOT(on_trigger()));
+  connect(m_log_button, &QToolButton::clicked, this, &InstanceOptionsBar::on_trigger);
 
   // Set first button as active
   m_active_button = m_log_button;

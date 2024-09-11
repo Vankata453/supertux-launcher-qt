@@ -28,7 +28,7 @@ LogBox::LogBox(QWidget* parent) :
 }
 
 void
-LogBox::on_file_change()
+LogBox::on_file_change(int)
 {
   QComboBox* box = static_cast<QComboBox*>(sender());
 

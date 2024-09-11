@@ -29,8 +29,6 @@ class QLineEdit;
 
 class AddInstanceDialog final : public QDialog
 {
-  Q_OBJECT;
-
 public:
   enum class TextBox
   {
@@ -55,11 +53,11 @@ private:
 
   void update_ok_button();
 
-private Q_SLOTS:
+private:
   void on_id_modified();
   void on_id_modified_by_user();
   void on_name_modified();
-  void on_version_changed();
+  void on_version_changed(int index = -1);
   void on_pre_release_toggle(int check_state);
 
 private:

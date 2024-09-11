@@ -24,7 +24,7 @@
 
 InstanceList::InstanceList() :
   QTreeView(),
-  m_proxy_model(new QSortFilterProxyModel())
+  m_proxy_model(new QSortFilterProxyModel(this))
 {
   setRootIsDecorated(false);
 
@@ -39,7 +39,7 @@ InstanceList::InstanceList() :
   setColumnWidth(1, 150); // "Version"
 
   // Create signal mappings
-  QObject::connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), SLOT(on_selection_change()));
+  QObject::connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &InstanceList::on_selection_change);
 }
 
 void
@@ -56,7 +56,7 @@ InstanceList::paintEvent(QPaintEvent* event)
 }
 
 void
-InstanceList::on_selection_change() const
+InstanceList::on_selection_change(const QItemSelection&, const QItemSelection&) const
 {
   MainWindow::current()->get_toolbar()->toggle_instance_buttons(!selectedIndexes().empty());
 }

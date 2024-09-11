@@ -53,11 +53,11 @@ ToolBar::ToolBar() :
   addWidget(m_launch_button);
 
   // Create signal mappings
-  connect(m_add_button, SIGNAL(clicked()), this, SLOT(on_add_trigger()));
-  connect(m_remove_button, SIGNAL(clicked()), this, SLOT(on_remove_trigger()));
-  connect(m_clone_button, SIGNAL(clicked()), this, SLOT(on_clone_trigger()));
-  connect(m_options_button, SIGNAL(clicked()), this, SLOT(on_options_trigger()));
-  connect(m_launch_button, SIGNAL(clicked()), this, SLOT(on_launch_trigger()));
+  connect(m_add_button, &QToolButton::clicked, this, &ToolBar::on_add_trigger);
+  connect(m_remove_button, &QToolButton::clicked, this, &ToolBar::on_remove_trigger);
+  connect(m_clone_button, &QToolButton::clicked, this, &ToolBar::on_clone_trigger);
+  connect(m_options_button, &QToolButton::clicked, this, &ToolBar::on_options_trigger);
+  connect(m_launch_button, &QToolButton::clicked, this, &ToolBar::on_launch_trigger);
 }
 
 void
